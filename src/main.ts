@@ -4,7 +4,7 @@ import 'element-plus/dist/index.css'
 // 配置国际化
 // @ts-ignore
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-import App from './App.vue'
+import App from '@/App.vue'
 
 const app = createApp(App)
 
