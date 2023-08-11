@@ -18,4 +18,7 @@ app.use(ElementPlus, {
 import globalComponent from '@/components/index.ts'
 app.use(globalComponent)
 
+// 引入全局样式
+import '@/styles/index.scss'
+
 app.mount('#app')
