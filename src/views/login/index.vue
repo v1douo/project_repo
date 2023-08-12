@@ -3,7 +3,12 @@
     <el-row>
       <el-col :span="12" :xs="0"></el-col>
       <el-col :span="12" :xs="24">
-        <el-form class="login-form" :model="loginForm" :rules="rules" ref="login_Form">
+        <el-form
+          class="login-form"
+          :model="loginForm"
+          :rules="rules"
+          ref="login_Form"
+        >
           <h1>星舱商管</h1>
           <h2>登陆</h2>
           <el-form-item prop="username">
@@ -15,7 +20,12 @@
           </el-form-item>
 
           <el-form-item>
-            <el-button :loading="loading" type="primary" class="login-btn" @click="login">
+            <el-button
+              :loading="loading"
+              type="primary"
+              class="login-btn"
+              @click="login"
+            >
               登陆
             </el-button>
           </el-form-item>
@@ -83,8 +93,22 @@ async function login() {
 
 // 表单校验需要的配置对象
 const rules = {
-  username: [{ required: true, min: 4, message: '用户名长度至少四位！', trigger: 'change' }],
-  password: [{ required: true, min: 6, message: '用户名长度至少六位！', trigger: 'change' },]
+  username: [
+    {
+      required: true,
+      min: 4,
+      message: '用户名长度至少四位！',
+      trigger: 'change',
+    },
+  ],
+  password: [
+    {
+      required: true,
+      min: 6,
+      message: '用户名长度至少六位！',
+      trigger: 'change',
+    },
+  ],
 }
 </script>
 

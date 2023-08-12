@@ -1,1 +1,24 @@
 @import './reset.scss';
+
+// 清除浮动
+.clearfix::before,
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+//滚动条外观设置
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: $sidebar-bgc;
+}
+
+::-webkit-scrollbar-thumb {
+  width: 10px;
+  background-color: white;
+  border-radius: 10px;
+}

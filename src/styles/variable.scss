@@ -1,1 +1,9 @@
 // 提供 scss 全局变量
+
+// layout 左侧菜单
+$sidebar-width: 300px;
+$sidebar-bgc: #001529;
+
+// layout 顶部导航
+$nav-width: calc(100% - $sidebar-width);
+$nav-height: 50px;
