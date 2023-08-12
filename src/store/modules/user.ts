@@ -12,7 +12,7 @@ let useUserStore = defineStore('user', {
   state: (): UserState => {
     return {
       // 存储用户的唯一标识 token
-      token: GET_TOKEN()
+      token: GET_TOKEN(),
     }
   },
   actions: {
@@ -27,7 +27,7 @@ let useUserStore = defineStore('user', {
       if (res.code === 200) {
         this.token = res.data.token as string
         // 进行本地持久化存储
-        SET_TOKEN((res.data.token as string))
+        SET_TOKEN(res.data.token as string)
         // 让当前的 async 函数返回一个成功的 promise
         return 'OK'
       } else {

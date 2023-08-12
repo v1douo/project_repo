@@ -1,24 +1,21 @@
 <template>
   <div class="login-container">
     <el-row>
-      <el-col :span="12" :xs="0">12321321</el-col>
+      <el-col :span="12" :xs="0"></el-col>
       <el-col :span="12" :xs="24">
-        <el-form class="login-form">
+        <el-form class="login-form" :model="loginForm" :rules="rules" ref="login_Form">
           <h1>星舱商管</h1>
           <h2>登陆</h2>
-          <el-form-item>
+          <el-form-item prop="username">
             <el-input v-model="loginForm.username"></el-input>
           </el-form-item>
-          <el-form-item>
+
+          <el-form-item prop="password">
             <el-input type="password" v-model="loginForm.password"></el-input>
           </el-form-item>
+
           <el-form-item>
-            <el-button
-              :loading="loading"
-              type="primary"
-              class="login-btn"
-              @click="login"
-            >
+            <el-button :loading="loading" type="primary" class="login-btn" @click="login">
               登陆
             </el-button>
           </el-form-item>
@@ -51,8 +48,13 @@ let loginForm = reactive({
   password: '111111',
 })
 
+// 获取登陆表单(el-form)组件
+let login_Form = ref()
+
 // 登陆按钮回调
 async function login() {
+  // 如果表单验证失败则会抛出异常，从而中断后面代码，这里并没有对其捕获
+  await login_Form.value.validate()
   try {
     // 点击按钮后让按钮转起来 —— 开始加载
     loading.value = true
@@ -77,6 +79,12 @@ async function login() {
       message: (error as Error).message,
     })
   }
+}
+
+// 表单校验需要的配置对象
+const rules = {
+  username: [{ required: true, min: 4, message: '用户名长度至少四位！', trigger: 'change' }],
+  password: [{ required: true, min: 6, message: '用户名长度至少六位！', trigger: 'change' },]
 }
 </script>
 
