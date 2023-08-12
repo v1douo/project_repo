@@ -13,6 +13,8 @@ import globalComponent from '@/components/index.ts'
 import '@/styles/index.scss'
 // 引入路由
 import router from './router'
+// 引入 pinia
+import pinia from './store'
 
 const app = createApp(App)
 
@@ -21,5 +23,6 @@ app.use(ElementPlus, {
 })
 app.use(globalComponent)
 app.use(router)
+app.use(pinia)
 
 app.mount('#app')

@@ -10,6 +10,7 @@ import type {
 
 //项目用户相关的请求地址
 enum API {
+  // 因为 request 的 baseUrl 是 api 所以不用写 api
   LOGIN_URL = '/user/login',
   USERINFO_URL = '/user/info',
   // LOGOUT_URL = '/admin/acl/index/logout',

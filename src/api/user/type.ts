@@ -5,7 +5,10 @@ export interface loginFormData {
 }
 
 interface dataType {
-  token: string
+  // 登陆成功为 token
+  token?: string
+  // 登陆失败就是 message
+  message?: string
 }
 
 // 登陆接口返回数据类型

@@ -13,7 +13,14 @@
             <el-input type="password" v-model="loginForm.password"></el-input>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" class="login-btn">登陆</el-button>
+            <el-button
+              :loading="loading"
+              type="primary"
+              class="login-btn"
+              @click="login"
+            >
+              登陆
+            </el-button>
           </el-form-item>
         </el-form>
       </el-col>
@@ -23,12 +30,54 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+// 引入用户相关的仓库
+import useUserStore from '@/store/modules/user'
+// 引入路由
+import { useRouter } from 'vue-router'
+// elePlus 的弹窗提示工具
+import { ElNotification } from 'element-plus'
 
+// 获取用户相关仓库
+let userStore = useUserStore()
+// 获取路由器
+let $router = useRouter()
+// 控制按钮加载效果（loading）
+let loading = ref(false)
+
+// 获取登陆表单数据
 let loginForm = reactive({
   username: 'admin',
   password: '111111',
 })
+
+// 登陆按钮回调
+async function login() {
+  try {
+    // 点击按钮后让按钮转起来 —— 开始加载
+    loading.value = true
+    // 根据 userLogin 返回的 promise 做事，这里通过 try-catch，也可以用 .then()
+    await userStore.userLogin(loginForm)
+    // 成功了则跳转到数据首页（home）
+    // push：程序式地通过将一条记录加入到历史栈中来导航到一个新的 URL。
+    $router.push('/')
+    // 登陆成功的提示信息
+    ElNotification({
+      type: 'success',
+      title: 'Hi, welcome Back!',
+      message: '登陆成功！',
+    })
+    // 加载效果消失
+    loading.value = false
+  } catch (error) {
+    // 加载效果消失
+    loading.value = false
+    ElNotification({
+      type: 'error',
+      message: (error as Error).message,
+    })
+  }
+}
 </script>
 
 <style lang="scss" scoped>
