@@ -2,10 +2,8 @@
   <div>test</div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
 
-<style scoped lang="scss">
-div {
+</script>
 
-}
-</style>
+<style scoped lang="scss"></style>
