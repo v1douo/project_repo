@@ -21,6 +21,6 @@ export const constantRoute = [
     // 任意路由，如果都匹配不上就匹配该路由
     name: 'Any',
     path: '/:pathMatch(.*)*',
-    redirect: '/404'
-  }
+    redirect: '/404',
+  },
 ]
