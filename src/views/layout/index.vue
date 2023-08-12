@@ -4,18 +4,16 @@
     <div class="layout-sidebar clearfix">
       <!-- logo -->
       <div class="logo">
-        <img src="setting.logo" alt="Logo">
+        <img :src="setting.logo" alt="Logo" />
         <p>{{ setting.title }}</p>
       </div>
-
     </div>
 
     <!-- 顶部导航 -->
     <div class="layout-nav"></div>
 
     <!-- 内容展示区 -->
-    <div class="layout-main">
-    </div>
+    <div class="layout-main"></div>
   </div>
 </template>
 
