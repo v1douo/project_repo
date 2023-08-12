@@ -7,18 +7,19 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import App from '@/App.vue'
 // svg 插件配置代码
 import 'virtual:svg-icons-register'
+// 插件，用于全局注册组件
+import globalComponent from '@/components/index.ts'
+// 引入全局样式
+import '@/styles/index.scss'
+// 引入路由
+import router from './router'
 
 const app = createApp(App)
 
 app.use(ElementPlus, {
   locale: zhCn,
 })
-
-// 插件，用于全局注册组件
-import globalComponent from '@/components/index.ts'
 app.use(globalComponent)
-
-// 引入全局样式
-import '@/styles/index.scss'
+app.use(router)
 
 app.mount('#app')
