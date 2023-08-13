@@ -7,12 +7,16 @@ import type { loginFormData, loginResponseData } from '@/api/user/type'
 import { UserState } from './types/types'
 // 引入操作本地存储数据的工具
 import { GET_TOKEN, SET_TOKEN } from '@/utils/token'
+// 引入路由（常量路由）
+import { constantRoute } from '@/router/routes'
 
 let useUserStore = defineStore('user', {
   state: (): UserState => {
     return {
       // 存储用户的唯一标识 token
       token: GET_TOKEN(),
+      // 生成菜单需要的数组（路由）
+      menuRoutes: constantRoute
     }
   },
   actions: {
