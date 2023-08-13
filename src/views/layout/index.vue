@@ -21,7 +21,9 @@
     <div class="layout-nav"></div>
 
     <!-- 内容展示区 -->
-    <div class="layout-main"></div>
+    <div class="layout-main">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 

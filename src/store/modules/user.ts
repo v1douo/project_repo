@@ -10,13 +10,13 @@ import { GET_TOKEN, SET_TOKEN } from '@/utils/token'
 // 引入路由（常量路由）
 import { constantRoute } from '@/router/routes'
 
-let useUserStore = defineStore('user', {
+const useUserStore = defineStore('user', {
   state: (): UserState => {
     return {
       // 存储用户的唯一标识 token
       token: GET_TOKEN(),
       // 生成菜单需要的数组（路由）
-      menuRoutes: constantRoute
+      menuRoutes: constantRoute,
     }
   },
   actions: {
@@ -26,7 +26,7 @@ let useUserStore = defineStore('user', {
       // 通过统一管理的 API 接口 reqLogin 传入 data
       // 在 reqLogin 中传入 url 路径和 data 给 request（即二次封装的 axios）
       // mock 接口在 request 中处理访问，然后决定返回的数据
-      let res: loginResponseData = await reqLogin(data)
+      const res: loginResponseData = await reqLogin(data)
       // 登陆成功 200 -> token
       if (res.code === 200) {
         this.token = res.data.token as string
