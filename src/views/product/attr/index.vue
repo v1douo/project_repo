@@ -4,4 +4,10 @@
 
 <script setup lang="ts"></script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.container {
+  height: 500px;
+  width: 500px;
+  background-color: #bfc;
+}
+</style>

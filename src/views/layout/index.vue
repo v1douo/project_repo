@@ -22,7 +22,7 @@
 
     <!-- 内容展示区 -->
     <div class="layout-main">
-      <router-view></router-view>
+      <Main></Main>
     </div>
   </div>
 </template>
@@ -31,6 +31,8 @@
 import setting from '@/setting'
 import Menu from './menu/index.vue'
 import useUserStore from '@/store/modules/user'
+// 引入封装好的 main（内容展示区）
+import Main from './main/index.vue'
 let userStore = useUserStore()
 </script>
 
