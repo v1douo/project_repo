@@ -7,7 +7,7 @@
 
 <script setup lang="ts">
 // 引入安装好的 animate.css
-import 'animate.css';
+import 'animate.css'
 </script>
 
 <style lang="scss" scoped></style>
