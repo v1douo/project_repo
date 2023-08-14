@@ -54,7 +54,7 @@
         </span>
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item>退出登录</el-dropdown-item>
+            <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -66,6 +66,8 @@
 import useNavControl from '@/store/modules/navControl.ts'
 // 获取用户相关的仓库来展示头像和用户名
 import useUserStore from '@/store/modules/user'
+// 获取路由器对象，用于退出登录
+import { useRouter } from 'vue-router'
 
 // 控制折叠菜单图标的切换
 const navControl = useNavControl()
@@ -90,8 +92,20 @@ function fullScreen() {
     document.exitFullscreen()
   }
 }
+
 // 用户 store
 const userStore = useUserStore()
+
+// 获取 $router
+const $router = useRouter()
+// 退出登录按钮回调
+function logout() {
+  // 向服务器发请求（目前没这个接口，先跳过）
+  // 仓库中关于用户的数据清空
+  userStore.userLogout()
+  // 跳转至登陆界面
+  $router.push({ path: '/login' })
+}
 </script>
 <script lang="ts">
 export default {
@@ -128,6 +142,7 @@ export default {
   .nav-right {
     display: flex;
     align-items: center;
+    margin-right: 15px;
   }
 }
 </style>

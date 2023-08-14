@@ -6,7 +6,7 @@ import { reqLogin, reqUserInfo } from '@/api/user'
 import type { loginFormData, loginResponseData } from '@/api/user/type'
 import { UserState } from './types/types'
 // 引入操作本地存储数据的工具
-import { GET_TOKEN, SET_TOKEN } from '@/utils/token'
+import { GET_TOKEN, REMOVE_TOKEN, SET_TOKEN } from '@/utils/token'
 // 引入路由（常量路由）
 import { constantRoute } from '@/router/routes'
 
@@ -51,6 +51,14 @@ const useUserStore = defineStore('user', {
         this.avatar = res.data.checkUser.avatar
       } else {
       }
+    },
+    //退出登录
+    async userLogout() {
+      // 目前没有 mock 接口（退出登录接口，通知服务器本地用户唯一标识失效)
+      this.token = ''
+      this.username = ''
+      this.avatar = ''
+      REMOVE_TOKEN()
     },
   },
   getters: {},
