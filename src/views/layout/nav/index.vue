@@ -99,10 +99,10 @@ const userStore = useUserStore()
 // 获取 $router
 const $router = useRouter()
 // 退出登录按钮回调
-function logout() {
+async function logout() {
   // 向服务器发请求（目前没这个接口，先跳过）
   // 仓库中关于用户的数据清空
-  userStore.userLogout()
+  await userStore.userLogout()
   // 跳转至登陆界面
   $router.push({ path: '/login' })
 }

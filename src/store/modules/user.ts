@@ -1,9 +1,7 @@
 // 创建用户相关仓库
 import { defineStore } from 'pinia'
 // 引入登陆接口
-import { reqLogin, reqUserInfo } from '@/api/user'
-// 引入数据类型
-import type { loginFormData, loginResponseData } from '@/api/user/type'
+import { reqLogin, reqUserInfo, reqLogout } from '@/api/user'
 import { UserState } from './types/types'
 // 引入操作本地存储数据的工具
 import { GET_TOKEN, REMOVE_TOKEN, SET_TOKEN } from '@/utils/token'
@@ -31,14 +29,15 @@ const useUserStore = defineStore('user', {
       const res: loginResponseData = await reqLogin(data)
       // 登陆成功 200 -> token
       if (res.code === 200) {
-        this.token = res.data.token as string
-        // 进行本地持久化存储
-        SET_TOKEN(res.data.token as string)
+        // 设置 TOKEN
+        this.token = res.data as string
+        // 进行本地持久化存储 TOKEN
+        SET_TOKEN(res.data as string)
         // 让当前的 async 函数返回一个成功的 promise
         return 'OK'
       } else {
         // 登陆失败 201 -> 返回错误信息
-        return Promise.reject(new Error(res.data.message))
+        return Promise.reject(new Error(res.data))
       }
     },
     // 获取用户信息的方法
@@ -47,20 +46,26 @@ const useUserStore = defineStore('user', {
       let res = await reqUserInfo()
       // 如果获取用户信息成功
       if (res.code == 200) {
-        this.username = res.data.checkUser.username
-        this.avatar = res.data.checkUser.avatar
+        this.username = res.data.name
+        this.avatar = res.data.avatar
         return 'ok'
       } else {
-        return Promise.reject('获取用户信息失败！')
+        return Promise.reject(new Error(res.message))
       }
     },
-    //退出登录
+    // 退出登录方法
     async userLogout() {
-      // 目前没有 mock 接口（退出登录接口，通知服务器本地用户唯一标识失效)
-      this.token = ''
-      this.username = ''
-      this.avatar = ''
-      REMOVE_TOKEN()
+      // 退出登录请求
+      const result = await reqLogout()
+      if (result.code == 200) {
+        this.token = ''
+        this.username = ''
+        this.avatar = ''
+        REMOVE_TOKEN()
+        return 'ok'
+      } else {
+        return Promise.reject(new Error(result.message))
+      }
     },
   },
   getters: {},

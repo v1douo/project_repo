@@ -55,7 +55,7 @@ let loading = ref(false)
 // 获取登陆表单数据
 let loginForm = reactive({
   username: 'admin',
-  password: '111111',
+  password: 'atguigu123',
 })
 
 // 获取登陆表单(el-form)组件

@@ -8,20 +8,18 @@ import type {
   userInfoResponseData,
 } from './type'
 
-//项目用户相关的请求地址
+//项目用户相关的请求地址(真实接口)
 enum API {
-  // 因为 request 的 baseUrl 是 api 所以不用写 api
-  LOGIN_URL = '/user/login',
-  USERINFO_URL = '/user/info',
-  // LOGOUT_URL = '/admin/acl/index/logout',
+  LOGIN_URL = '/admin/acl/index/login',
+  USERINFO_URL = '/admin/acl/index/info',
+  LOGOUT_URL = '/admin/acl/index/logout',
 }
 
-// 暴露请求函数
-//登录接口
+// 登录接口
 export const reqLogin = (data: loginFormData) =>
   request.post<any, loginResponseData>(API.LOGIN_URL, data)
-//获取用户信息
+// 获取用户信息
 export const reqUserInfo = () =>
   request.get<any, userInfoResponseData>(API.USERINFO_URL)
-//退出登录
-// export const reqLogout = () => request.post<any, any>(API.LOGOUT_URL)
+// 退出登录
+export const reqLogout = () => request.post<any, any>(API.LOGOUT_URL)
