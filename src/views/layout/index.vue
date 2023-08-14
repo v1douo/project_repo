@@ -146,7 +146,6 @@ export default {
     // 宽度和 nav 一样宽
     width: $nav-width;
     height: calc(100vh - $nav-height);
-    background-color: skyblue;
     left: $sidebar-width;
     top: $nav-height;
     padding: 20px;
