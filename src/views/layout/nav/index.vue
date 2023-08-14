@@ -33,13 +33,21 @@
         circle
         @click="reUpdate"
       ></el-button>
-      <el-button size="small" icon="FullScreen" circle @click="fullScreen"></el-button>
+      <el-button
+        size="small"
+        icon="FullScreen"
+        circle
+        @click="fullScreen"
+      ></el-button>
       <el-button size="small" icon="setting" circle></el-button>
-      <img src="logo.svg" style="width: 24px; height: 24px; margin: 0 10px" />
+      <img
+        :src="userStore.avatar"
+        style="width: 24px; height: 24px; margin: 0 10px; border-radius: 50%"
+      />
       <!-- 下拉菜单 -->
       <el-dropdown>
         <span class="el-dropdown-link">
-          admin
+          {{ userStore.username }}
           <el-icon class="el-icon--right">
             <arrow-down />
           </el-icon>
@@ -56,6 +64,8 @@
 
 <script setup lang="ts">
 import useNavControl from '@/store/modules/navControl.ts'
+// 获取用户相关的仓库来展示头像和用户名
+import useUserStore from '@/store/modules/user'
 
 // 控制折叠菜单图标的切换
 const navControl = useNavControl()
@@ -80,6 +90,8 @@ function fullScreen() {
     document.exitFullscreen()
   }
 }
+// 用户 store
+const userStore = useUserStore()
 </script>
 <script lang="ts">
 export default {

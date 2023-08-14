@@ -1,7 +1,7 @@
 // 创建用户相关仓库
 import { defineStore } from 'pinia'
 // 引入登陆接口
-import { reqLogin } from '@/api/user'
+import { reqLogin, reqUserInfo } from '@/api/user'
 // 引入数据类型
 import type { loginFormData, loginResponseData } from '@/api/user/type'
 import { UserState } from './types/types'
@@ -17,6 +17,8 @@ const useUserStore = defineStore('user', {
       token: GET_TOKEN(),
       // 生成菜单需要的数组（路由）
       menuRoutes: constantRoute,
+      username: '',
+      avatar: '',
     }
   },
   actions: {
@@ -37,6 +39,17 @@ const useUserStore = defineStore('user', {
       } else {
         // 登陆失败 201 -> 返回错误信息
         return Promise.reject(new Error(res.data.message))
+      }
+    },
+    // 获取用户信息的方法
+    async userInfo() {
+      // 获取用户信息存储在仓库中
+      let res = await reqUserInfo()
+      // 如果获取用户信息成功
+      if (res.code == 200) {
+        this.username = res.data.checkUser.username
+        this.avatar = res.data.checkUser.avatar
+      } else {
       }
     },
   },

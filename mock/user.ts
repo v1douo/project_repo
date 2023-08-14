@@ -54,15 +54,15 @@ export default [
     url: '/api/user/info',
     method: 'get',
     response: (request) => {
-      //获取请求头携带token
+      // 获取请求头携带token
       const token = request.headers.token
-      //查看用户信息是否包含有次token用户
+      // 查找对应 token 用户
       const checkUser = createUserList().find((item) => item.token === token)
-      //没有返回失败的信息
+      // 如果没有，则返回失败的信息
       if (!checkUser) {
         return { code: 201, data: { message: '获取用户信息失败！' } }
       }
-      //如果有返回成功信息
+      // 如果有，则返回用户信息
       return { code: 200, data: { checkUser } }
     },
   },
