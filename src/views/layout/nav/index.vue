@@ -1,11 +1,10 @@
-<!-- 封装的目的主要是为了添加动画 -->
 <template>
   <div class="nav">
     <!-- 左！ -->
     <div class="nav-left">
       <!-- 左侧图标 -->
       <el-icon style="margin-right: 10px" @click="changeIcon">
-        <component :is="menuControl.fold ? 'Fold' : 'Expand'"></component>
+        <component :is="navControl.fold ? 'Fold' : 'Expand'"></component>
       </el-icon>
       <!-- 左侧面包屑 -->
       <el-breadcrumb separator-icon="ArrowRight">
@@ -17,7 +16,7 @@
           :to="item.path"
         >
           <!-- 路由图标 -->
-          <el-icon>
+          <el-icon style="margin: 0 5px; vertical-align: top">
             <component :is="item.meta.icon"></component>
           </el-icon>
           <!-- 路由的标题 -->
@@ -28,7 +27,12 @@
 
     <!-- 右！ -->
     <div class="nav-right">
-      <el-button size="small" icon="Refresh" circle></el-button>
+      <el-button
+        size="small"
+        icon="Refresh"
+        circle
+        @click="reUpdate"
+      ></el-button>
       <el-button size="small" icon="FullScreen" circle></el-button>
       <el-button size="small" icon="setting" circle></el-button>
       <img src="logo.svg" style="width: 24px; height: 24px; margin: 0 10px" />
@@ -51,12 +55,18 @@
 </template>
 
 <script setup lang="ts">
-import useMenuControl from '@/store/modules/menuControl.ts'
+import useNavControl from '@/store/modules/navControl.ts'
 
 // 控制折叠菜单图标的切换
-const menuControl = useMenuControl()
+const navControl = useNavControl()
 function changeIcon() {
-  menuControl.fold = !menuControl.fold
+  navControl.fold = !navControl.fold
+}
+
+// 刷新按钮的回调
+function reUpdate() {
+  // 改变 refresh 的值，让 main 监听，改变了就刷新一下
+  navControl.refresh = !navControl.refresh
 }
 </script>
 <script lang="ts">
@@ -97,3 +107,4 @@ export default {
   }
 }
 </style>
+@/store/modules/navControl

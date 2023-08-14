@@ -7,7 +7,7 @@ export default defineStore('SettingStore', {
   state: () => {
     return {
       fold: false, // 控制菜单折叠还是收起
-      refresh: false, // 控制刷新效果
+      refresh: false, // 用于控制刷新效果
     }
   },
 })

@@ -1,7 +1,7 @@
 <template>
   <div class="layout-container">
     <!-- 左侧菜单 -->
-    <div class="layout-sidebar clearfix" :class="{ fold: menuControl.fold }">
+    <div class="layout-sidebar clearfix" :class="{ fold: navControl.fold }">
       <!-- logo -->
       <div class="logo" ref="logo">
         <img :src="setting.logo" alt="Logo" />
@@ -15,7 +15,7 @@
           text-color="black"
           :default-active="$route.path"
           active-text-color="rgb(255, 145, 0)"
-          :collapse="menuControl.fold"
+          :collapse="navControl.fold"
           :collapse-transition="false"
         >
           <!-- 根据路由动态生成菜单 -->
@@ -25,12 +25,12 @@
     </div>
 
     <!-- 顶部导航 -->
-    <div class="layout-nav" :class="{ fold: menuControl.fold }">
+    <div class="layout-nav" :class="{ fold: navControl.fold }">
       <Nav></Nav>
     </div>
 
     <!-- 内容展示区 -->
-    <div class="layout-main" :class="{ fold: menuControl.fold }">
+    <div class="layout-main" :class="{ fold: navControl.fold }">
       <Main></Main>
     </div>
   </div>
@@ -45,14 +45,14 @@ import useUserStore from '@/store/modules/user'
 import Main from './main/index.vue'
 // 获取路由对象
 import { useRoute } from 'vue-router'
-import useMenuControl from '@/store/modules/menuControl.ts'
+import useNavControl from '@/store/modules/navControl.ts'
 import { onMounted, ref } from 'vue'
 
 let userStore = useUserStore()
 // 用于获取当前路由地址，让 el-menu 展开当前 path 的菜单
 let $route = useRoute()
 
-let menuControl = useMenuControl()
+let navControl = useNavControl()
 
 // 实时监视 logo 宽度以改变标题的显示
 let logo = ref()
@@ -164,3 +164,4 @@ export default {
   background-color: #333 !important; /* 设置你想要的背景颜色 */
 }
 </style>
+@/store/modules/navControl
