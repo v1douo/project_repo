@@ -4,8 +4,8 @@
     <!-- 左！ -->
     <div class="nav-left">
       <!-- 左侧图标 -->
-      <el-icon style="margin-right: 10px">
-        <Expand></Expand>
+      <el-icon style="margin-right: 10px" @click="changeIcon">
+        <component :is="menuControl.fold ? 'Fold' : 'Expand'"></component>
       </el-icon>
       <!-- 左侧面包屑 -->
       <el-breadcrumb separator-icon="ArrowRight">
@@ -50,7 +50,20 @@
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useMenuControl from '@/store/modules/menuControl.ts'
+
+// 控制折叠菜单图标的切换
+const menuControl = useMenuControl()
+function changeIcon() {
+  menuControl.fold = !menuControl.fold
+}
+</script>
+<script lang="ts">
+export default {
+  name: 'Nav',
+}
+</script>
 
 <style lang="scss" scoped>
 .nav {
@@ -60,9 +73,9 @@
   justify-content: space-between;
   background-image: linear-gradient(
     to right,
-    rgba(198, 198, 197, 0.667),
-    rgba(255, 162, 0, 0.402),
-    rgba(198, 197, 197, 0.667)
+    rgba(255, 255, 255, 0.667),
+    rgba(255, 162, 0, 0.18),
+    rgba(255, 255, 255, 0.667)
   );
   background-size: 200%;
   background-position: 0%;

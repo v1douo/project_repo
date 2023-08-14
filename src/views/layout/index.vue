@@ -1,20 +1,22 @@
 <template>
   <div class="layout-container">
     <!-- 左侧菜单 -->
-    <div class="layout-sidebar clearfix">
+    <div class="layout-sidebar clearfix" :class="{ fold: menuControl.fold }">
       <!-- logo -->
-      <div class="logo">
+      <div class="logo" ref="logo">
         <img :src="setting.logo" alt="Logo" />
-        <p>{{ setting.title }}</p>
+        <p v-show="isShow">{{ setting.title }}</p>
       </div>
       <!-- 展示菜单（滚动组件） -->
       <el-scrollbar class="scrollbar">
         <!-- 菜单组件 -->
         <el-menu
           background-color="$sidebar-bgc"
-          text-color="white"
+          text-color="black"
           :default-active="$route.path"
           active-text-color="rgb(255, 145, 0)"
+          :collapse="menuControl.fold"
+          :collapse-transition="false"
         >
           <!-- 根据路由动态生成菜单 -->
           <Menu :menuList="userStore.menuRoutes"></Menu>
@@ -23,12 +25,12 @@
     </div>
 
     <!-- 顶部导航 -->
-    <div class="layout-nav">
+    <div class="layout-nav" :class="{ fold: menuControl.fold }">
       <Nav></Nav>
     </div>
 
     <!-- 内容展示区 -->
-    <div class="layout-main">
+    <div class="layout-main" :class="{ fold: menuControl.fold }">
       <Main></Main>
     </div>
   </div>
@@ -43,10 +45,39 @@ import useUserStore from '@/store/modules/user'
 import Main from './main/index.vue'
 // 获取路由对象
 import { useRoute } from 'vue-router'
+import useMenuControl from '@/store/modules/menuControl.ts'
+import { onMounted, ref } from 'vue'
 
 let userStore = useUserStore()
 // 用于获取当前路由地址，让 el-menu 展开当前 path 的菜单
 let $route = useRoute()
+
+let menuControl = useMenuControl()
+
+// 实时监视 logo 宽度以改变标题的显示
+let logo = ref()
+let logoWidth = ref(0)
+let isShow = ref(true)
+onMounted(() => {
+  if (logo.value) {
+    // 初始化获取元素宽度
+    logoWidth.value = logo.value.offsetWidth
+    // 使用 Resize Observer 监听宽度变化
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        logoWidth.value = entry.contentRect.width
+        isShow.value = logoWidth.value > 220 ? true : false
+      }
+    })
+    resizeObserver.observe(logo.value)
+  }
+})
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Layout',
+}
 </script>
 
 <style lang="scss" scoped>
@@ -58,6 +89,7 @@ let $route = useRoute()
     width: $sidebar-width;
     height: 100vh;
     background-color: $sidebar-bgc;
+    transition: 0.4s;
 
     .logo {
       display: flex;
@@ -89,6 +121,10 @@ let $route = useRoute()
         border-right: none;
       }
     }
+
+    &.fold {
+      width: $sidebar-fold-width;
+    }
   }
 
   .layout-nav {
@@ -97,6 +133,12 @@ let $route = useRoute()
     position: fixed;
     top: 0;
     left: $sidebar-width;
+    transition: 0.4s;
+
+    &.fold {
+      width: $nav-fold-width;
+      left: $sidebar-fold-width;
+    }
   }
 
   .layout-main {
@@ -109,6 +151,16 @@ let $route = useRoute()
     top: $nav-height;
     padding: 20px;
     overflow: auto;
+    transition: 0.4s;
+
+    &.fold {
+      width: $nav-fold-width;
+      left: $sidebar-fold-width;
+    }
   }
+}
+.el-menu--collapse .el-submenu.is-active,
+.el-menu--collapse .el-menu-item.is-active {
+  background-color: #333 !important; /* 设置你想要的背景颜色 */
 }
 </style>

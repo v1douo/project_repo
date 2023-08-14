@@ -2,8 +2,10 @@
 
 // layout 左侧菜单
 $sidebar-width: 300px;
-$sidebar-bgc: #000000df;
+$sidebar-fold-width: 70px;
+$sidebar-bgc: #ffffff;
 
 // layout 顶部导航
 $nav-width: calc(100% - $sidebar-width);
+$nav-fold-width: calc(100% - $sidebar-fold-width);
 $nav-height: 50px;

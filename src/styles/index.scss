@@ -24,7 +24,20 @@
 }
 
 :root {
+  // 修改主要颜色
   --el-color-primary: rgb(255, 145, 0);
   --el-color-primary-light-3: rgba(255, 145, 0, 0.719);
   --el-color-primary-dark-2: rgb(255, 145, 0);
+}
+
+.el-menu-item:hover {
+  background-color: transparent;
+  background-image: linear-gradient(to left, rgb(255, 255, 255),
+      rgba(255, 162, 0, 0.421)) ;
+}
+
+.el-sub-menu__title:hover {
+  background-color: transparent;
+  background-image: linear-gradient(to left, rgb(255, 255, 255),
+      rgba(255, 162, 0, 0.421)) ;
 }
