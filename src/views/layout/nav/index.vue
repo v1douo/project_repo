@@ -33,7 +33,7 @@
         circle
         @click="reUpdate"
       ></el-button>
-      <el-button size="small" icon="FullScreen" circle></el-button>
+      <el-button size="small" icon="FullScreen" circle @click="fullScreen"></el-button>
       <el-button size="small" icon="setting" circle></el-button>
       <img src="logo.svg" style="width: 24px; height: 24px; margin: 0 10px" />
       <!-- 下拉菜单 -->
@@ -67,6 +67,18 @@ function changeIcon() {
 function reUpdate() {
   // 改变 refresh 的值，让 main 监听，改变了就刷新一下
   navControl.refresh = !navControl.refresh
+}
+
+// 全屏按钮的回调
+function fullScreen() {
+  // DOM 对象的属性，可以判断是否是全屏模式
+  let full = document.fullscreenElement
+  if (!full) {
+    // 文档根节点的方法实现全屏
+    document.documentElement.requestFullscreen()
+  } else {
+    document.exitFullscreen()
+  }
 }
 </script>
 <script lang="ts">
