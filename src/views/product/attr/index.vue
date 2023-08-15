@@ -42,9 +42,17 @@
               type="primary"
               size="small"
               icon="Edit"
-              @click="updateAttr"
+              @click="updateAttr(row)"
             ></el-button>
-            <el-button type="danger" size="small" icon="Delete"></el-button>
+            <el-popconfirm
+              :title="`确定删除 ${row.attrName} 吗?`"
+              width="200px"
+              @confirm="deleteAttr(row.id)"
+            >
+              <template #reference>
+                <el-button type="danger" size="small" icon="Delete"></el-button>
+              </template>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -122,10 +130,10 @@
 import useCategoryStore from '@/store/modules/category'
 let categoryStore = useCategoryStore()
 
-import { watch, ref, reactive, nextTick } from 'vue'
+import { watch, ref, reactive, nextTick, onBeforeUnmount } from 'vue'
 import { ElMessage } from 'element-plus'
 // 引入接口
-import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
+import { reqAttr, reqAddOrUpdateAttr, reqRemoveAttr } from '@/api/product/attr'
 import { AttrResponseData, Attr, AttrValue } from '@/api/product/attr/type'
 // 存储已有属性与属性值
 let attrArr = ref<Attr[]>([])
@@ -174,8 +182,12 @@ function addAttr() {
   attrParams.categoryId = categoryStore.c3Id
 }
 // 修改属性按钮的回调
-function updateAttr() {
+function updateAttr(row: Attr) {
   scene.value = 1
+  // 将已有的属性对象赋值给 attrParams
+  // 注意，必须要深拷贝，如果是浅拷贝则用户点取消，因为它们操作的是同一个对象
+  // 虽然没有提交到服务器，但是会显示在界面上，刷新消失
+  Object.assign(attrParams, JSON.parse(JSON.stringify(row)))
 }
 // 取消按钮的回调
 function cancel() {
@@ -261,6 +273,31 @@ function toEdit(row: AttrValue, $index: number) {
 
 // el-input 实例
 let inputArr = ref<any>([])
+
+// 删除属性按钮回调
+async function deleteAttr(attrId: number) {
+  let result: any = await reqRemoveAttr(attrId)
+  // 删除成功
+  if (result.code == 200) {
+    ElMessage({
+      type: 'success',
+      message: '删除成功!',
+    })
+    // 获取一次已有的属性与属性值
+    getAttr()
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '删除失败!',
+    })
+  }
+}
+
+// 路由组件销毁的时候，把仓库分类相关的数据清空
+onBeforeUnmount(() => {
+  // 清空仓库的数据(自带的方法)
+  categoryStore.$reset()
+})
 </script>
 
 <style scoped lang="scss"></style>
