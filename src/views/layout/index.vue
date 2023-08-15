@@ -163,4 +163,3 @@ export default {
   background-color: #333 !important; /* 设置你想要的背景颜色 */
 }
 </style>
-@/store/modules/navControl

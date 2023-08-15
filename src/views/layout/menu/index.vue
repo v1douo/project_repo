@@ -64,11 +64,3 @@ export default {
   name: 'Menu',
 }
 </script>
-
-<style lang="scss" scoped>
-.el-menu-item {
-}
-
-.el-sub-menu {
-}
-</style>
