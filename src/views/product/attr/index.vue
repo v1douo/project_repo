@@ -1,7 +1,13 @@
 <template>
   <Category></Category>
   <el-card style="margin: 10px 0">
-    <el-button type="primary" size="default" icon="Plus" @click="">
+    <el-button
+      type="primary"
+      size="default"
+      icon="Plus"
+      :disabled="categoryStore.c3Id ? false : true"
+      @click=""
+    >
       添加属性
     </el-button>
     <el-table border style="margin: 15px 0">
@@ -26,6 +32,9 @@
   </el-card>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useCategoryStore from '@/store/modules/category'
+let categoryStore = useCategoryStore()
+</script>
 
 <style scoped lang="scss"></style>
