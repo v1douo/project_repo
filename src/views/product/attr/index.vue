@@ -83,6 +83,7 @@
         <el-table-column label="属性值名称" align="center">
           <template #="{ row, $index }">
             <el-input
+              :ref="(vc: any) => (inputArr[$index] = vc)"
               v-if="row.flag"
               @blur="toLook(row, $index)"
               size="small"
@@ -92,7 +93,16 @@
             <div v-else @click="toEdit(row, $index)">{{ row.valueName }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="属性值操作" align="center"></el-table-column>
+        <el-table-column label="属性值操作" align="center">
+          <template #="{ index }">
+            <el-button
+              type="danger"
+              size="small"
+              icon="Delete"
+              @click="attrParams.attrValueList.splice(index, 1)"
+            ></el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <el-button
         type="primary"
@@ -112,7 +122,7 @@
 import useCategoryStore from '@/store/modules/category'
 let categoryStore = useCategoryStore()
 
-import { watch, ref, reactive } from 'vue'
+import { watch, ref, reactive, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 // 引入接口
 import { reqAttr, reqAddOrUpdateAttr } from '@/api/product/attr'
@@ -178,6 +188,10 @@ function addAttrValue() {
     // 控制每一个属性的编辑模式与视图模式的切换
     flag: true,
   })
+  // 获取最后的 el-input 组件，让其自动聚焦
+  nextTick(() => {
+    inputArr.value[attrParams.attrValueList.length - 1].focus()
+  })
 }
 // 保存按钮回调
 async function save() {
@@ -237,7 +251,16 @@ function toLook(row: AttrValue, $index: number) {
 // 获取焦点时候的事件回调
 function toEdit(row: AttrValue, $index: number) {
   row.flag = true
+
+  // 响应式数据发生变化后，获取更新的 DOM(组件实例)
+  nextTick(() => {
+    // 用 ele-plus 的方法 focus 让组件聚焦
+    inputArr.value[$index].focus()
+  })
 }
+
+// el-input 实例
+let inputArr = ref<any>([])
 </script>
 
 <style scoped lang="scss"></style>
