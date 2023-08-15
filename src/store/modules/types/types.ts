@@ -6,3 +6,14 @@ export interface UserState {
   username: string
   avatar: string
 }
+
+import type { CategoryObj } from '@/api/product/attr/type'
+// 定义分类仓库 state 对象的 ts 类型
+export interface CategoryState {
+  c1Id: string | number
+  c1Arr: CategoryObj[]
+  c2Arr: CategoryObj[]
+  c2Id: string | number
+  c3Arr: CategoryObj[]
+  c3Id: string | number
+}

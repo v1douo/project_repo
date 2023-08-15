@@ -4,9 +4,11 @@
 import SvgIcon from '@/components/SvgIcon/index.vue'
 // 引入 elePlus 的全部图标组件
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+// 全局注册
+import Category from '@/components/Category/index.vue'
 
 // 把所有的需要全局注册的组件都放到这里，这里就一个，但是模拟多个的情况
-const allGlobalComponents: any = { SvgIcon }
+const allGlobalComponents: any = { SvgIcon, Category }
 
 export default {
   // 在 main.ts 中一旦 use 就会执行 install()
