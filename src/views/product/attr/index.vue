@@ -1,47 +1,75 @@
 <template>
-  <Category></Category>
+  <Category :scene="scene"></Category>
   <el-card style="margin: 10px 0">
-    <el-button
-      type="primary"
-      size="default"
-      icon="Plus"
-      :disabled="categoryStore.c3Id ? false : true"
-      @click=""
-    >
-      添加属性
-    </el-button>
-    <el-table border style="margin: 15px 0" :data="attrArr">
-      <el-table-column
-        label="序号"
-        type="index"
-        align="center"
-        width="80"
-      ></el-table-column>
-      <el-table-column
-        label="属性名称"
-        align="center"
-        width="120"
-        prop="attrName"
-      ></el-table-column>
-      <el-table-column label="属性值名称" align="center">
-        <template #="{ row }">
-          <el-tag
-            type="warning"
-            style="margin: 5px"
-            v-for="item in row.attrValueList"
-            :key="item.id"
-          >
-            {{ item.valueName }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" align="center" width="120">
-        <template #="{ row }">
-          <el-button type="primary" size="small" icon="Edit"></el-button>
-          <el-button type="danger" size="small" icon="Delete"></el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div v-show="scene == 0">
+      <el-button
+        @click="addAttr"
+        type="primary"
+        size="default"
+        icon="Plus"
+        :disabled="categoryStore.c3Id ? false : true"
+      >
+        添加属性
+      </el-button>
+      <el-table border style="margin: 15px 0" :data="attrArr">
+        <el-table-column
+          label="序号"
+          type="index"
+          align="center"
+          width="80"
+        ></el-table-column>
+        <el-table-column
+          label="属性名称"
+          align="center"
+          width="120"
+          prop="attrName"
+        ></el-table-column>
+        <el-table-column label="属性值名称" align="center">
+          <template #="{ row }">
+            <el-tag
+              type="warning"
+              style="margin: 5px"
+              v-for="item in row.attrValueList"
+              :key="item.id"
+            >
+              {{ item.valueName }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" align="center" width="120">
+          <template #="{ row }">
+            <el-button
+              type="primary"
+              size="small"
+              icon="Edit"
+              @click="updateAttr"
+            ></el-button>
+            <el-button type="danger" size="small" icon="Delete"></el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+    <!-- 添加 or 修改的 card -->
+    <div v-show="scene == 1">
+      <el-form :inline="true">
+        <el-form-item label="属性名称">
+          <el-input placeholder="请输入属性名称"></el-input>
+        </el-form-item>
+      </el-form>
+      <el-button type="primary" icon="Plus">添加属性值</el-button>
+      <el-table border style="margin: 10px 0px">
+        <el-table-column
+          label="序号"
+          width="80px"
+          type="index"
+          align="center"
+        ></el-table-column>
+        <el-table-column label="属性值名称" align="center"></el-table-column>
+        <el-table-column label="属性值操作" align="center"></el-table-column>
+      </el-table>
+      <el-button type="primary" size="default">保存</el-button>
+      <el-button type="danger" size="default" @click="cancel">取消</el-button>
+    </div>
   </el-card>
 </template>
 
@@ -76,6 +104,21 @@ async function getAttr() {
   if (result.code == 200) {
     attrArr.value = result.data
   }
+}
+
+// 空值卡片内容切换（点击添加修改后的跳转）0 就展示 table，1 就展示修改/添加界面
+let scene = ref<number>(1)
+// 添加属性按钮的回调
+function addAttr() {
+  scene.value = 1
+}
+// 修改属性按钮的回调
+function updateAttr() {
+  scene.value = 1
+}
+// 取消按钮的回调
+function cancel() {
+  scene.value = 0
 }
 </script>
 
