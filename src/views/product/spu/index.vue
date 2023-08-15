@@ -2,21 +2,70 @@
   <div>
     <Category :scene="scene"></Category>
     <el-card style="margin: 10px 0">
-      <el-button @click="" type="primary" size="default" icon="Plus">
+      <!-- 添加按钮 -->
+      <el-button
+        @click=""
+        type="primary"
+        size="default"
+        icon="Plus"
+        :disabled="categoryStore.c3Id ? false : true"
+      >
         添加SPU
       </el-button>
+
       <!-- 展示已有 SPU数据 -->
-      <el-table style="margin: 15px 0px" border>
+      <el-table style="margin: 15px 0px" border :data="records">
         <el-table-column
           label="序号"
           type="index"
           align="center"
           width="80"
         ></el-table-column>
-        <el-table-column label="SPU名称" align="center"></el-table-column>
-        <el-table-column label="SPU描述" align="center"></el-table-column>
-        <el-table-column label="SPU操作" align="center"></el-table-column>
+        <el-table-column
+          label="SPU名称"
+          align="center"
+          prop="spuName"
+        ></el-table-column>
+        <el-table-column
+          label="SPU描述"
+          align="center"
+          prop="description"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column label="SPU操作" align="center">
+          <template #="{ row }">
+            <el-button
+              type="primary"
+              size="small"
+              icon="Plus"
+              title="添加SKU"
+            ></el-button>
+            <el-button
+              type="success"
+              size="small"
+              icon="Edit"
+              title="修改SPU"
+            ></el-button>
+            <el-button
+              type="info"
+              size="small"
+              icon="View"
+              title="查看SKU列表"
+            ></el-button>
+            <el-popconfirm :title="`确定删除${row.spuName}?`" width="200px">
+              <template #reference>
+                <el-button
+                  type="danger"
+                  size="small"
+                  icon="Delete"
+                  title="删除SPU"
+                ></el-button>
+              </template>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
       </el-table>
+
       <!-- 分页器 -->
       <el-pagination
         v-model:current-page="pageNo"
@@ -26,14 +75,21 @@
         layout="prev, pager, next, jumper,->,sizes,total"
         :total="total"
         small="small"
+        @current-change="getHasSpu"
+        @size-change="changeSize"
       />
     </el-card>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+// 引入分类仓库，监视三级 id，一旦有就展示数据
+import useCategoryStore from '@/store/modules/category'
+import { reqHasSpu } from '@/api/product/spu'
+import type { HasSpuResponseData, Records } from '@/api/product/spu/type'
+import { ref, watch } from 'vue'
 
+let categoryStore = useCategoryStore()
 // 场景切换
 let scene = ref<number>(0)
 // 分页器默认页码
@@ -41,7 +97,39 @@ let pageNo = ref<number>(1)
 // 每一页展示几条数据
 let pageSize = ref<number>(3)
 // 存储已有 SPU 总个数
-let total = ref<number>(30)
+let total = ref<number>(0)
+
+// 存储已有的 SPU的数据
+let records = ref<Records>([])
+
+// 监听三级分类 id
+watch(
+  () => categoryStore.c3Id,
+  () => {
+    // 改变时清空对应数据
+    records.value = []
+    // 如果没有 c3Id 则不展示数据
+    if (!categoryStore.c3Id) return
+    getHasSpu()
+  },
+)
+// 获取某一三级分类下的全部 SPU 数据
+async function getHasSpu(pager = 1) {
+  pageNo.value = pager
+  let result: HasSpuResponseData = await reqHasSpu(
+    pageNo.value,
+    pageSize.value,
+    categoryStore.c3Id,
+  )
+  if (result.code == 200) {
+    records.value = result.data.records
+    total.value = result.data.total
+  }
+}
+// 分页器的展示个数发生变化时触发（x条/页）
+function changeSize() {
+  getHasSpu()
+}
 </script>
 
 <style scoped lang="scss"></style>
