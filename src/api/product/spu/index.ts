@@ -1,5 +1,11 @@
 import request from '@/utils/request'
-import { AllTradeMark, HasSaleAttrResponseData, HasSpuResponseData, SaleAttrResponseData, SpuHasImg } from './type'
+import {
+  AllTradeMark,
+  HasSaleAttrResponseData,
+  HasSpuResponseData,
+  SaleAttrResponseData,
+  SpuHasImg,
+} from './type'
 
 enum API {
   // 获取已有的SPU的数据
