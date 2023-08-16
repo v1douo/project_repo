@@ -47,13 +47,25 @@
     </el-form-item>
     <el-form-item label="SPU销售属性">
       <!-- 展示销售属性的下拉菜单 -->
-      <el-select>
-        <el-option label="apple"></el-option>
-        <el-option label="apple"></el-option>
-        <el-option label="apple"></el-option>
+      <el-select
+        v-model="saleAttrIdAndValueName"
+        :placeholder="
+          unSelectSaleAttr.length
+            ? `还未选择${unSelectSaleAttr.length}个`
+            : '无'
+        "
+      >
+        <el-option
+          v-for="item in unSelectSaleAttr"
+          :value="`${item.id}:${item.name}`"
+          :key="item.id"
+          :label="item.name"
+        ></el-option>
       </el-select>
       <!-- 添加销售属性按钮 -->
       <el-button
+        @click="addSaleAttr"
+        :disabled="saleAttrIdAndValueName ? false : true"
         style="margin-left: 10px"
         type="primary"
         size="default"
@@ -128,7 +140,7 @@ import {
   reqSpuHasSaleAttr,
   reqAllSaleAttr,
 } from '@/api/product/spu'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 
 let emits = defineEmits(['changeScene'])
@@ -196,9 +208,9 @@ const handlePictureCardPreview = (file: any) => {
   dialogVisible.value = true
 }
 // 照片墙删除文件钩子
-const handleRemove = () => {}
+function handleRemove() {}
 // 照片墙上传成功之前的钩子约束文件的大小与类型
-const handlerUpload = (file: any) => {
+function handlerUpload(file: any) {
   if (
     file.type == 'image/png' ||
     file.type == 'image/jpeg' ||
@@ -220,6 +232,34 @@ const handlerUpload = (file: any) => {
     })
     return false
   }
+}
+// 计算出当前 SPU 还没有的销售属性，进行下拉框内的展示
+let unSelectSaleAttr = computed(() => {
+  // 全部销售属性: 颜色、版本、尺码
+  // 已有的销售属性: 颜色、版本
+  let unSelectArr = allSaleAttr.value.filter((item) => {
+    return saleAttr.value.every((item1) => {
+      return item.name != item1.saleAttrName
+    })
+  })
+  return unSelectArr
+})
+
+// 收集还未选择的销售属性的 ID与 名字
+let saleAttrIdAndValueName = ref<string>('')
+// 添加销售属性按钮的回调
+function addSaleAttr() {
+  const [baseSaleAttrId, saleAttrName] = saleAttrIdAndValueName.value.split(':')
+  // 准备一个新的销售属性对象，将来带给服务器即可
+  let newSaleAttr: SaleAttr = {
+    baseSaleAttrId,
+    saleAttrName,
+    spuSaleAttrValueList: [],
+  }
+  // 把新增的追加到数组当中
+  saleAttr.value.push(newSaleAttr)
+  // 清空收集的数据
+  saleAttrIdAndValueName.value = ''
 }
 
 // 让父组件拿到这些方法
