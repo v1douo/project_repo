@@ -157,12 +157,20 @@ function changeSize() {
 function addSpu() {
   // 切换场景
   scene.value = 1
+  // 点击添加 SPU 调用初始化方法
+  spu.value.initAddSpu(categoryStore.c3Id)
 }
 // 子组件 SpuForm 绑定的子定义事件
-function changeScene(num: number) {
+function changeScene(obj: any) {
   // 子组件点击取消，将 scene 变为 0，展示数据
-  scene.value = num
-  getHasSpu()
+  scene.value = obj.flag
+  if (obj.params == 'update') {
+    // 更新留在当前页
+    getHasSpu(pageNo.value)
+  } else {
+    // 添加留在第一页
+    getHasSpu()
+  }
 }
 // 修改 SPU 按钮的回调
 function updateSpu(row: SpuData) {

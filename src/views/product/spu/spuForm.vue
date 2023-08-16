@@ -169,7 +169,10 @@ import { ElMessage } from 'element-plus'
 let emits = defineEmits(['changeScene'])
 // 点击取消按钮通知父组件切换场景为 0，展示 SPU 数据
 function cancel() {
-  emits('changeScene', 0)
+  emits('changeScene', {
+    flag: 0,
+    params: 'update',
+  })
 }
 
 // 存储 SPU的这些数据
@@ -350,7 +353,10 @@ async function save() {
       message: SpuParams.value.id ? '更新成功' : '添加成功',
     })
     // 通知父组件切换场景为 0
-    emits('changeScene', 0)
+    emits('changeScene', {
+      flag: 0,
+      params: SpuParams.value.id ? 'update' : 'add',
+    })
   } else {
     ElMessage({
       type: 'error',
@@ -359,6 +365,33 @@ async function save() {
   }
 }
 
+// 添加一个新的 SPU 初始化方法
+const initAddSpu = async (c3Id: number | string) => {
+  // 清空数据
+  Object.assign(SpuParams.value, {
+    category3Id: '', // 收集三级分类的ID
+    spuName: '', // SPU的名字
+    description: '', // SPU的描述
+    tmId: '', // 品牌的ID
+    spuImageList: [],
+    spuSaleAttrList: [],
+  })
+  // 清空照片
+  imgList.value = []
+  // 清空销售属性
+  saleAttr.value = []
+  saleAttrIdAndValueName.value = ''
+
+  // 存储三级分类的ID
+  SpuParams.value.category3Id = c3Id
+  // 获取全部品牌的数据
+  let result: AllTradeMark = await reqAllTradeMark()
+  let result1: HasSaleAttrResponseData = await reqAllSaleAttr()
+  // 存储数据
+  AllTradeMark.value = result.data
+  allSaleAttr.value = result1.data
+}
+
 // 让父组件拿到这些方法
-defineExpose({ initHasSpuData })
+defineExpose({ initHasSpuData, initAddSpu })
 </script>
