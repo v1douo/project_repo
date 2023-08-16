@@ -162,6 +162,7 @@ function addSpu() {
 function changeScene(num: number) {
   // 子组件点击取消，将 scene 变为 0，展示数据
   scene.value = num
+  getHasSpu()
 }
 // 修改 SPU 按钮的回调
 function updateSpu(row: SpuData) {
