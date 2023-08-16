@@ -12,8 +12,8 @@ export interface SpuData {
   description: string
   category3Id: string | number
   tmId: number | string
-  spuSaleAttrList: null
-  spuImageList: null
+  spuSaleAttrList: null | SaleAttr[]
+  spuImageList: null | SpuImg[]
 }
 // SPU 数据的数组
 export type Records = SpuData[]
@@ -42,7 +42,6 @@ export interface AllTradeMark extends ResponseData {
 
 // 商品图片数据的 ts 类型
 export interface SpuImg {
-  // 为什么加？ 未知
   id?: number
   imgName?: string
   imgUrl?: string

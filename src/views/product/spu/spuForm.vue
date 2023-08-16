@@ -1,17 +1,27 @@
 <template>
   <el-form label-width="100px">
     <el-form-item label="SPU名称">
-      <el-input placeholder="请输入SPU名称"></el-input>
+      <el-input
+        placeholder="请输入SPU名称"
+        v-model="SpuParams.spuName"
+      ></el-input>
     </el-form-item>
     <el-form-item label="SPU品牌">
-      <el-select>
-        <el-option label="apple"></el-option>
-        <el-option label="apple"></el-option>
-        <el-option label="apple"></el-option>
+      <el-select v-model="SpuParams.tmId">
+        <el-option
+          v-for="item in AllTradeMark"
+          :key="item.id"
+          :label="item.tmName"
+          :value="item.id"
+        ></el-option>
       </el-select>
     </el-form-item>
     <el-form-item label="SPU描述">
-      <el-input type="textarea" placeholder="请输入SPU描述"></el-input>
+      <el-input
+        v-model="SpuParams.description"
+        type="textarea"
+        placeholder="请输入SPU描述"
+      ></el-input>
     </el-form-item>
     <el-form-item label="SPU图片">
       <el-upload
@@ -52,7 +62,7 @@
         添加销售属性
       </el-button>
       <!-- 展示销售属性与属性值的 table -->
-      <el-table border style="margin: 10px 0px">
+      <el-table border style="margin: 10px 0px" :data="saleAttr">
         <el-table-column
           label="序号"
           type="index"
@@ -63,21 +73,36 @@
           label="销售属性名字"
           width="120px"
           align="center"
-          prop=""
+          prop="saleAttrName"
         ></el-table-column>
-        <el-table-column align="center" label="销售属性值"></el-table-column>
+        <el-table-column align="center" label="销售属性值">
+          <template #="{ row }">
+            <el-tag
+              style="margin: 0px 5px"
+              @close="row.spuSaleAttrValueList.splice(index, 1)"
+              v-for="(item, index) in row.spuSaleAttrValueList"
+              :key="row.id"
+              class="mx-1"
+              closable
+            >
+              {{ item.saleAttrValueName }}
+            </el-tag>
+            <el-button type="success" size="small" icon="Plus"></el-button>
+          </template>
+        </el-table-column>
         <el-table-column align="center" label="操作" width="120px">
-          <template #="{}">
+          <template #="{ index }">
             <el-button
-              type="primary"
+              type="danger"
               size="small"
               icon="Delete"
-              @click=""
+              @click="saleAttr.splice(index, 1)"
             ></el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-form-item>
+    <!-- 最下面的操作按钮 -->
     <el-form-item>
       <el-button type="primary" size="default" @click="">保存</el-button>
       <el-button type="danger" size="default" @click="cancel">取消</el-button>
@@ -86,10 +111,117 @@
 </template>
 
 <script setup lang="ts">
-let emits = defineEmits(['changeScene'])
+import { SpuData } from '@/api/product/spu/type'
+import type {
+  AllTradeMark,
+  SpuHasImg,
+  SaleAttrResponseData,
+  HasSaleAttrResponseData,
+  Trademark,
+  SpuImg,
+  SaleAttr,
+  HasSaleAttr,
+} from '@/api/product/spu/type'
+import {
+  reqAllTradeMark,
+  reqSpuImageList,
+  reqSpuHasSaleAttr,
+  reqAllSaleAttr,
+} from '@/api/product/spu'
+import { ref } from 'vue'
+import { ElMessage } from 'element-plus'
 
+let emits = defineEmits(['changeScene'])
 // 点击取消按钮通知父组件切换场景为 0，展示 SPU 数据
 function cancel() {
   emits('changeScene', 0)
 }
+
+// 存储 SPU的这些数据
+let AllTradeMark = ref<Trademark[]>([])
+// 商品图片
+let imgList = ref<SpuImg[]>([])
+// 已有 SPU 销售属性
+let saleAttr = ref<SaleAttr[]>([])
+// 全部销售属性
+let allSaleAttr = ref<HasSaleAttr[]>([])
+
+// 存储已有的SPU对象
+let SpuParams = ref<SpuData>({
+  category3Id: '', //收集三级分类的 ID
+  spuName: '', // SPU 的名字
+  description: '', // SPU 的描述
+  tmId: '', // 品牌的 ID
+  spuImageList: [],
+  spuSaleAttrList: [],
+})
+
+async function initHasSpuData(spu: SpuData) {
+  // 存储已有的 SPU 对象，将来在模板中展示
+  SpuParams.value = spu
+  // spu 即为父组件传递过来的已有的SPU对象(不完整)
+  // 获取品牌的全部的数据
+  let result: AllTradeMark = await reqAllTradeMark()
+  // 获取品牌的全部商品图片
+  let result1: SpuHasImg = await reqSpuImageList(spu.id as number)
+  // 获取 SPU 已有的销售属性数据
+  let result2: SaleAttrResponseData = await reqSpuHasSaleAttr(spu.id as number)
+  // 获取整个项目的全部 SPU销售属性
+  let result3: HasSaleAttrResponseData = await reqAllSaleAttr()
+
+  // 存储全部品牌的数据
+  AllTradeMark.value = result.data
+  // SPU 的对应商品图片
+  imgList.value = result1.data.map((item) => {
+    // 用 map 遍历修改对应名称来符合 el-upload 的规范
+    return {
+      name: item.imgName,
+      url: item.imgUrl,
+    }
+  })
+  // 存储已有 SPU的销售属性
+  saleAttr.value = result2.data
+  // 存储全部的销售属性
+  allSaleAttr.value = result3.data
+}
+
+// 控制图片预览对话框的显示与隐藏
+let dialogVisible = ref<boolean>(false)
+// 存储预览图片地址
+let dialogImageUrl = ref<string>('')
+// 照片墙点击预览按钮的时候触发的钩子
+const handlePictureCardPreview = (file: any) => {
+  dialogImageUrl.value = file.url
+  // 对话框弹出来
+  dialogVisible.value = true
+}
+// 照片墙删除文件钩子
+const handleRemove = () => {}
+// 照片墙上传成功之前的钩子约束文件的大小与类型
+const handlerUpload = (file: any) => {
+  if (
+    file.type == 'image/png' ||
+    file.type == 'image/jpeg' ||
+    file.type == 'image/gif'
+  ) {
+    if (file.size / 1024 / 1024 < 3) {
+      return true
+    } else {
+      ElMessage({
+        type: 'error',
+        message: '上传文件务必小于3M!',
+      })
+      return false
+    }
+  } else {
+    ElMessage({
+      type: 'error',
+      message: '上传文件必类型必须是 PNG | JPG | GIF',
+    })
+    return false
+  }
+}
+
+// 让父组件拿到这些方法
+defineExpose({ initHasSpuData })
 </script>
