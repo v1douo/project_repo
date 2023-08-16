@@ -99,7 +99,21 @@
             >
               {{ item.saleAttrValueName }}
             </el-tag>
-            <el-button type="success" size="small" icon="Plus"></el-button>
+            <el-input
+              @blur="toLook(row)"
+              v-model="row.saleAttrValue"
+              v-if="row.flag == true"
+              placeholder="请输入属性值"
+              size="small"
+              style="width: 100px"
+            ></el-input>
+            <el-button
+              v-else
+              @click="toEdit(row)"
+              type="success"
+              size="small"
+              icon="Plus"
+            ></el-button>
           </template>
         </el-table-column>
         <el-table-column align="center" label="操作" width="120px">
@@ -129,6 +143,7 @@ import type {
   SpuHasImg,
   SaleAttrResponseData,
   HasSaleAttrResponseData,
+  SaleAttrValue,
   Trademark,
   SpuImg,
   SaleAttr,
@@ -260,6 +275,51 @@ function addSaleAttr() {
   saleAttr.value.push(newSaleAttr)
   // 清空收集的数据
   saleAttrIdAndValueName.value = ''
+}
+
+// 添加属性值按钮的点击事件
+function toEdit(row: SaleAttr) {
+  // 点击按钮的时候，input 组件出现
+  row.flag = true
+  row.saleAttrValue = ''
+}
+// 表单元素失去焦点的事件回调
+const toLook = (row: SaleAttr) => {
+  // 整理收集的属性的 ID 与属性值的名字
+  const { baseSaleAttrId, saleAttrValue } = row
+  // 整理成服务器需要的属性值形式
+  let newSaleAttrValue: SaleAttrValue = {
+    baseSaleAttrId,
+    saleAttrValueName: saleAttrValue as string,
+  }
+
+  // 非法情况判断
+  if ((saleAttrValue as string).trim() == '') {
+    row.flag = false
+    ElMessage({
+      type: 'error',
+      message: '属性值不能为空!',
+    })
+    return
+  }
+  // 判断属性值是否在数组当中存在
+  let repeat = row.spuSaleAttrValueList.find((item) => {
+    return item.saleAttrValueName == saleAttrValue
+  })
+
+  if (repeat) {
+    row.flag = false
+    ElMessage({
+      type: 'error',
+      message: '属性值重复!',
+    })
+    return
+  }
+
+  // 追加新的属性值对象
+  row.spuSaleAttrValueList.push(newSaleAttrValue)
+  //切 换为查看模式
+  row.flag = false
 }
 
 // 让父组件拿到这些方法
