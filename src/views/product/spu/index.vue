@@ -36,6 +36,7 @@
           <el-table-column label="SPU操作" align="center">
             <template #="{ row }">
               <el-button
+                @click="addSku"
                 type="primary"
                 size="small"
                 icon="Plus"
@@ -90,7 +91,7 @@
       ></SpuForm>
 
       <!-- 添加 SKU 的子组件 -->
-      <SkuForm v-show="scene == 2"></SkuForm>
+      <SkuForm v-show="scene == 2" @changeScene="changeScene"></SkuForm>
     </el-card>
   </div>
 </template>
@@ -111,7 +112,7 @@ import SkuForm from './skuForm.vue'
 
 let categoryStore = useCategoryStore()
 // 场景切换，0: 显示 SPU 数据，1: 添加修改 SPU，3: 添加 SKU
-let scene = ref<number>(0)
+let scene = ref<number>(2)
 // 分页器默认页码
 let pageNo = ref<number>(1)
 // 每一页展示几条数据
@@ -178,6 +179,12 @@ function updateSpu(row: SpuData) {
   scene.value = 1
   // 调用子组件的实例方法获取完整的 Spu 数据
   spu.value.initHasSpuData(row)
+}
+
+// 添加 SKU 按钮的回调
+function addSku() {
+  // 点击切换为场景为 2
+  scene.value = 2
 }
 </script>
 

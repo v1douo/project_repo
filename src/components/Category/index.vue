@@ -3,7 +3,7 @@
     <el-form :inline="true">
       <el-form-item label="一级分类">
         <el-select
-          :disabled="scene"
+          :disabled="scene == 0 ? false : true"
           v-model="categoryStore.c1Id"
           @change="handler1"
         >
@@ -17,7 +17,7 @@
       </el-form-item>
       <el-form-item label="二级分类">
         <el-select
-          :disabled="scene"
+          :disabled="scene == 0 ? false : true"
           v-model="categoryStore.c2Id"
           @change="handler2"
         >
@@ -30,7 +30,10 @@
         </el-select>
       </el-form-item>
       <el-form-item label="三级分类">
-        <el-select :disabled="scene" v-model="categoryStore.c3Id">
+        <el-select
+          :disabled="scene == 0 ? false : true"
+          v-model="categoryStore.c3Id"
+        >
           <el-option
             v-for="c3 in categoryStore.c3Arr"
             :key="c3.id"
