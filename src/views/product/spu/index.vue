@@ -36,7 +36,7 @@
           <el-table-column label="SPU操作" align="center">
             <template #="{ row }">
               <el-button
-                @click="addSku"
+                @click="addSku(row)"
                 type="primary"
                 size="small"
                 icon="Plus"
@@ -91,7 +91,11 @@
       ></SpuForm>
 
       <!-- 添加 SKU 的子组件 -->
-      <SkuForm v-show="scene == 2" @changeScene="changeScene"></SkuForm>
+      <SkuForm
+        ref="sku"
+        v-show="scene == 2"
+        @changeScene="changeScene"
+      ></SkuForm>
     </el-card>
   </div>
 </template>
@@ -124,6 +128,8 @@ let records = ref<Records>([])
 
 // 获取子组件实例 SpuForm
 let spu = ref<any>()
+// 获取子组件实例 SkuForm
+let sku = ref<any>()
 
 // 监听三级分类 id
 watch(
@@ -182,9 +188,10 @@ function updateSpu(row: SpuData) {
 }
 
 // 添加 SKU 按钮的回调
-function addSku() {
+function addSku(row: SpuData) {
   // 点击切换为场景为 2
   scene.value = 2
+  sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row)
 }
 </script>
 
