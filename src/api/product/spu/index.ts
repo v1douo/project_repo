@@ -77,3 +77,7 @@ export const reqAddSku = (data: SkuData) =>
 // 获取 SKU 数据（为了展示 SKU 列表）
 export const reqSkuList = (spuId: number | string) =>
   request.get<any, SkuInfoData>(API.SKUINFO_URL + spuId)
+
+// 删除已有的SPU
+export const reqRemoveSpu = (spuId: number | string) =>
+  request.delete<any, any>(API.REMOVESPU_URL + spuId)
