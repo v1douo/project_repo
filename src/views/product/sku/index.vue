@@ -1,6 +1,6 @@
 <template>
   <el-card>
-    <el-table border style="margin: 10px 0px">
+    <el-table border style="margin: 10px 0px" :data="skuArr">
       <el-table-column
         label="序号"
         type="index"
@@ -11,50 +11,46 @@
         label="名称"
         align="center"
         show-overflow-tooltip
-        width="150px"
-        prop=""
+        width="130px"
+        prop="skuName"
       ></el-table-column>
       <el-table-column
         label="描述"
         align="center"
         show-overflow-tooltip
-        width="150px"
-        prop=""
+        width="130px"
+        prop="skuDesc"
       ></el-table-column>
       <el-table-column label="图片" align="center" width="150px">
         <template #="{ row }">
-          <img
-            :src="row.skuDefaultImg"
-            alt=""
-            style="width: 100px; height: 100px"
-          />
+          <img :src="row.skuDefaultImg" style="width: 100px; height: 100px" />
         </template>
       </el-table-column>
       <el-table-column
         label="重量"
-        width="150px"
+        width="130px"
         align="center"
         prop="weight"
       ></el-table-column>
       <el-table-column
         align="center"
         label="价格"
-        width="150px"
+        width="130px"
         prop="price"
       ></el-table-column>
-      <el-table-column label="操作" width="250px" fixed="right">
+      <el-table-column label="操作" align="center" fixed="right">
         <template #="{ row }">
           <el-button
-            type="primary"
+            type="success"
             size="small"
             :icon="row.isSale == 1 ? 'Bottom' : 'Top'"
             @click=""
           ></el-button>
           <el-button type="primary" size="small" icon="Edit"></el-button>
-          <el-button type="primary" size="small" icon="InfoFilled"></el-button>
+          <el-button type="info" size="small" icon="InfoFilled"></el-button>
           <el-popconfirm :title="`确定删除${row.skuName}?`" width="200px">
             <template #reference>
-              <el-button type="primary" size="small" icon="Delete"></el-button>
+              <el-button type="danger" size="small" icon="Delete"></el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -69,19 +65,43 @@
       layout="prev, pager, next, jumper,->,sizes,total"
       :total="total"
       small="small"
+      @current-change="getHasSku"
+      @size-change="handler"
     />
   </el-card>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reqSkuList } from '@/api/product/sku'
+import { SkuData, SkuResponseData } from '@/api/product/sku/type'
+import { onMounted, ref } from 'vue'
 
 // 分页器当前页码
 let pageNo = ref<number>(1)
 // 每一页展示几条数据
 let pageSize = ref<number>(10)
 let total = ref<number>(0)
+// 存储 SKU 数据
+let skuArr = ref<SkuData[]>([])
 
+// 挂载后获取数据
+onMounted(() => {
+  getHasSku()
+})
+async function getHasSku(pager = 1) {
+  // 当前分页器的页码
+  pageNo.value = pager
+  let result: SkuResponseData = await reqSkuList(pageNo.value, pageSize.value)
+  if (result.code == 200) {
+    total.value = result.data.total
+    skuArr.value = result.data.records
+  }
+}
+
+// 分页器下拉菜单发生变化触发
+function handler() {
+  getHasSku()
+}
 </script>
 
 <style scoped lang="scss"></style>
