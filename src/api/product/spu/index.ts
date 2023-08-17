@@ -7,6 +7,7 @@ import {
   SpuHasImg,
   SpuData,
   SkuData,
+  SkuInfoData,
 } from './type'
 
 enum API {
@@ -26,7 +27,7 @@ enum API {
   UPDATESPU_URL = '/admin/product/updateSpuInfo',
   // 追加一个新增的 SKU
   ADDSKU_URL = '/admin/product/saveSkuInfo',
-  // 查看某一个已有 SPU 下的全部售卖商品
+  // 查看某一个已有 SPU 下的全部售卖商品（SKU 列表）
   SKUINFO_URL = '/admin/product/findBySpuId/',
   // 删除已有的 SPU
   REMOVESPU_URL = '/admin/product/deleteSpu/',
@@ -72,3 +73,7 @@ export const reqAddOrUpdateSpu = (data: SpuData) => {
 //新增 SKU 请求方法
 export const reqAddSku = (data: SkuData) =>
   request.post<any, any>(API.ADDSKU_URL, data)
+
+// 获取 SKU 数据（为了展示 SKU 列表）
+export const reqSkuList = (spuId: number | string) =>
+  request.get<any, SkuInfoData>(API.SKUINFO_URL + spuId)

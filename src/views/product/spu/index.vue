@@ -52,6 +52,7 @@
               <el-button
                 type="info"
                 size="small"
+                @click="findSku(row)"
                 icon="View"
                 title="查看SKU列表"
               ></el-button>
@@ -96,6 +97,23 @@
         v-show="scene == 2"
         @changeScene="changeScene"
       ></SkuForm>
+
+      <!-- dialog 对话框: 展示已有的 SKU 数据 -->
+      <el-dialog v-model="show" title="SKU列表">
+        <el-table border :data="skuArr">
+          <el-table-column label="SKU名字" prop="skuName"></el-table-column>
+          <el-table-column label="SKU价格" prop="price"></el-table-column>
+          <el-table-column label="SKU重量" prop="weight"></el-table-column>
+          <el-table-column label="SKU图片">
+            <template #="{ row }">
+              <img
+                :src="row.skuDefaultImg"
+                style="width: 100px; height: 100px"
+              />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
@@ -103,10 +121,12 @@
 <script setup lang="ts">
 // 引入分类仓库，监视三级 id，一旦有就展示数据
 import useCategoryStore from '@/store/modules/category'
-import { reqHasSpu } from '@/api/product/spu'
+import { reqHasSpu, reqSkuList } from '@/api/product/spu'
 import type {
   HasSpuResponseData,
   Records,
+  SkuData,
+  SkuInfoData,
   SpuData,
 } from '@/api/product/spu/type'
 import { ref, watch } from 'vue'
@@ -193,6 +213,18 @@ function addSku(row: SpuData) {
   scene.value = 2
   sku.value.initSkuData(categoryStore.c1Id, categoryStore.c2Id, row)
 }
-</script>
 
-<style scoped lang="scss"></style>
+// 存储 SKU 数据
+let skuArr = ref<SkuData[]>([])
+let show = ref<boolean>(false)
+
+//查看 SKU 列表的按钮回调
+async function findSku(row: SpuData) {
+  let result: SkuInfoData = await reqSkuList(row.id as number)
+  if (result.code == 200) {
+    skuArr.value = result.data
+    //对话框显示出来
+    show.value = true
+  }
+}
+</script>
