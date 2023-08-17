@@ -41,12 +41,17 @@
       <el-table-column label="操作" align="center" fixed="right">
         <template #="{ row }">
           <el-button
-            type="success"
+            :type="row.isSale == 1 ? 'success' : 'info'"
             size="small"
             :icon="row.isSale == 1 ? 'Bottom' : 'Top'"
-            @click=""
+            @click="updateSale(row)"
           ></el-button>
-          <el-button type="primary" size="small" icon="Edit"></el-button>
+          <el-button
+            type="primary"
+            size="small"
+            icon="Edit"
+            @click="updateSku"
+          ></el-button>
           <el-button type="info" size="small" icon="InfoFilled"></el-button>
           <el-popconfirm :title="`确定删除${row.skuName}?`" width="200px">
             <template #reference>
@@ -72,8 +77,9 @@
 </template>
 
 <script setup lang="ts">
-import { reqSkuList } from '@/api/product/sku'
+import { reqCancelSale, reqSaleSku, reqSkuList } from '@/api/product/sku'
 import { SkuData, SkuResponseData } from '@/api/product/sku/type'
+import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
 
 // 分页器当前页码
@@ -101,6 +107,29 @@ async function getHasSku(pager = 1) {
 // 分页器下拉菜单发生变化触发
 function handler() {
   getHasSku()
+}
+
+// 商品的上架与下架的操作
+const updateSale = async (row: SkuData) => {
+  if (row.isSale == 1) {
+    // 下架操作
+    await reqCancelSale(row.id as number)
+    ElMessage({ type: 'success', message: '下架成功' })
+    // 发请求获取当前更新完毕的全部已有的 SKU
+    getHasSku(pageNo.value)
+  } else {
+    // 上架操作
+    await reqSaleSku(row.id as number)
+    //提示信息
+    ElMessage({ type: 'success', message: '上架成功' })
+    //发请求获取当前更新完毕的全部已有的 SKU
+    getHasSku(pageNo.value)
+  }
+}
+
+// 更新已有的 SKU
+const updateSku = () => {
+  ElMessage({ type: 'success', message: '程序员在努力的更新中....' })
 }
 </script>
 
