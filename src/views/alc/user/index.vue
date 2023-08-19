@@ -2,11 +2,18 @@
   <el-card style="height: 75px">
     <el-form :inline="true">
       <el-form-item label="用户名:">
-        <el-input placeholder="请输入用户名"></el-input>
+        <el-input v-model="keyword" placeholder="请输入用户名"></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="default">搜索</el-button>
-        <el-button type="danger" size="default">重置</el-button>
+        <el-button
+          @click="search"
+          :disabled="!keyword"
+          type="primary"
+          size="default"
+        >
+          搜索
+        </el-button>
+        <el-button type="danger" size="default" @click="reset">重置</el-button>
       </el-form-item>
     </el-form>
   </el-card>
@@ -238,7 +245,11 @@ onMounted(() => {
 const getHasUser = async (pager = 1) => {
   // 收集当前页码
   pageNo.value = pager
-  let result: UserResponseData = await reqUserInfo(pageNo.value, pageSize.value)
+  let result: UserResponseData = await reqUserInfo(
+    pageNo.value,
+    pageSize.value,
+    keyword.value,
+  )
   if (result.code == 200) {
     total.value = result.data.total
     userArr.value = result.data.records
@@ -430,5 +441,23 @@ async function deleteSelectUser() {
     ElMessage({ type: 'success', message: '删除成功' })
     getHasUser(userArr.value.length > 1 ? pageNo.value : pageNo.value - 1)
   }
+}
+
+// 收集搜索的关键字
+let keyword = ref<string>('')
+// 搜索按钮的回调
+function search() {
+  // 根据关键字获取相应的用户数据
+  getHasUser()
+  // 清空关键字
+  keyword.value = ''
+}
+
+// 利用仓库的刷新完成重置
+import useNavControl from '@/store/modules/navControl'
+let navControl = useNavControl()
+// 重置按钮
+function reset() {
+  navControl.refresh = !navControl.refresh
 }
 </script>
