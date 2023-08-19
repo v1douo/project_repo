@@ -49,7 +49,7 @@ const useUserStore = defineStore('user', {
     // 获取用户信息的方法
     async userInfo() {
       // 获取用户信息存储在仓库中
-      let res: userInfoResponseData = await reqUserInfo()
+      const res: userInfoResponseData = await reqUserInfo()
       // 如果获取用户信息成功
       if (res.code == 200) {
         this.username = res.data.name

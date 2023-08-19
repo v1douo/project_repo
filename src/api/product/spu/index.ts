@@ -70,7 +70,7 @@ export const reqAddOrUpdateSpu = (data: SpuData) => {
   }
 }
 
-//新增 SKU 请求方法
+// 新增 SKU 请求方法
 export const reqAddSku = (data: SkuData) =>
   request.post<any, any>(API.ADDSKU_URL, data)
 

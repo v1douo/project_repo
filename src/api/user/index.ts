@@ -1,4 +1,4 @@
-//统一管理咱们项目用户相关的接口
+// 统一管理咱们项目用户相关的接口
 import request from '@/utils/request'
 
 // 统一管理接口
@@ -8,7 +8,7 @@ import type {
   userInfoResponseData,
 } from './type'
 
-//项目用户相关的请求地址(真实接口)
+// 项目用户相关的请求地址(真实接口)
 enum API {
   LOGIN_URL = '/admin/acl/index/login',
   USERINFO_URL = '/admin/acl/index/info',

@@ -1,7 +1,7 @@
 // 路由鉴权：项目中路由能否被访问的权限设置
 import router from './router'
 // 进度条
-// @ts-ignore
+// @ts-expect-error
 import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 // 引入 setting 来进行网页 title 的修改
@@ -22,7 +22,7 @@ router.beforeEach(async (to: any, from: any, next: any) => {
   // 获取用户名字
   const username = userStore.username
   if (token) {
-    //登录成功不能访问 login
+    // 登录成功不能访问 login
     if (to.path == '/login') {
       // 如果访问 login 则跳转到 /
       next({ path: '/' })

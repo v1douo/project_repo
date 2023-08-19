@@ -5,7 +5,7 @@ import type { SkuInfoData, SkuResponseData } from './type'
 enum API {
   // 获取 SKU 数据
   SKU_URL = '/admin/product/list/',
-  //上架
+  // 上架
   SALE_URL = '/admin/product/onSale/',
   // 下架的接口
   CANCELSALE_URL = '/admin/product/cancelSale/',
