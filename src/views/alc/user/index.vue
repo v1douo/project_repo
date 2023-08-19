@@ -23,13 +23,13 @@
       <el-table-column label="#" align="center" type="index"></el-table-column>
       <el-table-column label="ID" align="center" prop="id"></el-table-column>
       <el-table-column
-        label="用户名字"
+        label="用户名"
         align="center"
         prop="username"
         show-overflow-tooltip
       ></el-table-column>
       <el-table-column
-        label="用户名称"
+        label="用户昵称"
         align="center"
         prop="name"
         show-overflow-tooltip
@@ -96,10 +96,10 @@
     </template>
     <!-- 身体部分 -->
     <template #default>
-      <el-form :model="userParams" ref="formRef">
-        <el-form-item label="用户姓名" prop="username">
+      <el-form :model="userParams" ref="formRef" :rules="rules">
+        <el-form-item label="用姓名" prop="username">
           <el-input
-            placeholder="请您输入用户姓名"
+            placeholder="请您输入用户名"
             v-model="userParams.username"
           ></el-input>
         </el-form-item>
@@ -130,7 +130,7 @@
 import { reqAddOrUpdateUser, reqUserInfo } from '@/api/acl/user'
 import { Records, User, UserResponseData } from '@/api/acl/user/type'
 import { ElMessage } from 'element-plus'
-import { onMounted, reactive, ref } from 'vue'
+import { nextTick, onMounted, reactive, ref } from 'vue'
 
 // 默认页码
 let pageNo = ref<number>(1)
@@ -149,6 +149,9 @@ let userParams = reactive<User>({
   name: '',
   password: '',
 })
+
+// 获取 form
+let formRef = ref<any>()
 
 onMounted(() => {
   getHasUser()
@@ -175,6 +178,12 @@ const addUser = () => {
     name: '',
     password: '',
   })
+  // 清除上一次的错误的提示信息
+  nextTick(() => {
+    formRef.value.clearValidate('username')
+    formRef.value.clearValidate('name')
+    formRef.value.clearValidate('password')
+  })
 }
 // 更新已有的用户按钮的回调
 const updateUser = (row: User) => {
@@ -184,6 +193,8 @@ const updateUser = (row: User) => {
 }
 // 添加 or 更新 保存按钮的回调
 async function save() {
+  // 表单必须符合全部 validator 才能继续执行
+  await formRef.value.validate()
   let result: any = await reqAddOrUpdateUser(userParams)
   // 添加或者更新成功
   if (result.code == 200) {
@@ -211,5 +222,39 @@ async function save() {
 // 取消按钮的回调
 const cancel = () => {
   drawer.value = false
+}
+
+// 校验用户名字回调函数
+const validatorUsername = (_rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 5) {
+    callBack()
+  } else {
+    callBack(new Error('用户名至少五位'))
+  }
+}
+// 校验用户名字回调函数
+const validatorName = (_rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 5) {
+    callBack()
+  } else {
+    callBack(new Error('用户昵称至少五位'))
+  }
+}
+// 校验密码
+const validatorPassword = (_rule: any, value: any, callBack: any) => {
+  if (value.trim().length >= 6) {
+    callBack()
+  } else {
+    callBack(new Error('用户密码至少六位'))
+  }
+}
+// 表单校验的规则对象(使用自定义校验规则)
+const rules = {
+  // 用户名
+  username: [{ required: true, trigger: 'blur', validator: validatorUsername }],
+  // 用户昵称
+  name: [{ required: true, trigger: 'blur', validator: validatorName }],
+  // 用户密码
+  password: [{ required: true, trigger: 'blur', validator: validatorPassword }],
 }
 </script>
