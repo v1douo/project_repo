@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { SkuResponseData } from './type'
+import type { SkuInfoData, SkuResponseData } from './type'
 
 // 枚举地址
 enum API {
@@ -26,3 +26,7 @@ export const reqSaleSku = (skuId: number) =>
 // 下架的请求
 export const reqCancelSale = (skuId: number) =>
   request.get<any, any>(API.CANCELSALE_URL + skuId)
+
+// 取商品详情的接口
+export const reqSkuInfo = (skuId: number) =>
+  request.get<any, SkuInfoData>(API.SKUINFO_URL + skuId)

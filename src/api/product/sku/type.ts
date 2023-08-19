@@ -9,6 +9,7 @@ export interface Attr {
   id?: number
   attrId: number | string // 平台属性的 ID
   valueId: number | string // 属性值的 ID
+  valueName?: string
 }
 export interface saleArr {
   id?: number
