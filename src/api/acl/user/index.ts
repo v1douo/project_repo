@@ -1,5 +1,10 @@
 import request from '@/utils/request'
-import { User, UserResponseData } from './type'
+import {
+  AllRoleResponseData,
+  SetRoleData,
+  User,
+  UserResponseData,
+} from './type'
 
 //枚举地址
 enum API {
@@ -32,3 +37,11 @@ export const reqAddOrUpdateUser = (data: User) => {
     return request.post<any, any>(API.ADDUSER_URL, data)
   }
 }
+
+// 获取全部职位以及当前用户的已有的职位
+export const reqAllRole = (userId: number) =>
+  request.get<any, AllRoleResponseData>(API.ALLROLEURL + userId)
+
+// 分配职位
+export const reqSetUserRole = (data: SetRoleData) =>
+  request.post<any, any>(API.SETROLE_URL, data)

@@ -54,7 +54,12 @@
       ></el-table-column>
       <el-table-column label="操作" width="300px" align="center">
         <template #="{ row }">
-          <el-button type="success" size="small" icon="User">
+          <el-button
+            @click="setRole(row)"
+            type="success"
+            size="small"
+            icon="User"
+          >
             分配角色
           </el-button>
           <el-button
@@ -124,11 +129,65 @@
       </div>
     </template>
   </el-drawer>
+
+  <!-- 分配角色 -->
+  <el-drawer v-model="drawer1">
+    <template #header>
+      <h4>分配角色(职位)</h4>
+    </template>
+    <template #default>
+      <el-form>
+        <el-form-item label="用户名">
+          <el-input v-model="userParams.username" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item label="职位列表">
+          <el-checkbox
+            @change="handleCheckAllChange"
+            v-model="checkAll"
+            :indeterminate="isIndeterminate"
+          >
+            全选
+          </el-checkbox>
+          <!-- 显示职位的复选框 -->
+          <el-checkbox-group
+            v-model="userRole"
+            @change="handleCheckedCitiesChange"
+          >
+            <el-checkbox
+              v-for="(role, index) in allRole"
+              :key="index"
+              :label="role"
+            >
+              {{ role.roleName }}
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template #footer>
+      <div style="flex: auto">
+        <el-button type="danger" @click="drawer1 = false">取消</el-button>
+        <el-button type="primary" @click="confirmClick">确定</el-button>
+      </div>
+    </template>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { reqAddOrUpdateUser, reqUserInfo } from '@/api/acl/user'
-import { Records, User, UserResponseData } from '@/api/acl/user/type'
+import {
+  reqAddOrUpdateUser,
+  reqAllRole,
+  reqSetUserRole,
+  reqUserInfo,
+} from '@/api/acl/user'
+import {
+  AllRole,
+  AllRoleResponseData,
+  Records,
+  SetRoleData,
+  User,
+  UserResponseData,
+} from '@/api/acl/user/type'
 import { ElMessage } from 'element-plus'
 import { nextTick, onMounted, reactive, ref } from 'vue'
 
@@ -264,5 +323,65 @@ const rules = {
   name: [{ required: true, trigger: 'blur', validator: validatorName }],
   // 用户密码
   password: [{ required: true, trigger: 'blur', validator: validatorPassword }],
+}
+
+// 控制分配角色抽屉显示隐藏
+let drawer1 = ref<boolean>(false)
+// 全选
+const checkAll = ref<boolean>(false)
+// 控制顶部全选复选框不确定的样式
+const isIndeterminate = ref<boolean>(true)
+// 存储全部职位的数据
+let allRole = ref<AllRole>([])
+// 当前用户已有的职位
+let userRole = ref<AllRole>([])
+
+async function setRole(row: User) {
+  // 存储点击的用户数据（拿用户名）
+  Object.assign(userParams, row)
+  // 获取全部的职位的数据与当前用户已有的职位的数据
+  let result: AllRoleResponseData = await reqAllRole(userParams.id as number)
+  if (result.code == 200) {
+    // 存储全部的职位
+    allRole.value = result.data.allRolesList
+    // 存储当前用户已有的职位
+    userRole.value = result.data.assignRoles
+    // 抽屉显示出来
+    drawer1.value = true
+  }
+}
+// 全选复选框的 change 事件
+const handleCheckAllChange = (val: boolean) => {
+  // val:true(全选) / false(没有全选)
+  userRole.value = val ? allRole.value : []
+  // 不确定的样式(确定样式)
+  isIndeterminate.value = false
+}
+// 全部复选框的 change 事件
+const handleCheckedCitiesChange = (value: string[]) => {
+  // 如果勾选上的项目个数与全部的职位个数相等，则勾选上全选
+  checkAll.value = value.length === allRole.value.length
+  // 不确定的样式
+  isIndeterminate.value = value.length !== allRole.value.length
+}
+// 确认按钮
+async function confirmClick() {
+  // 收集参数
+  let data: SetRoleData = {
+    userId: userParams.id as number,
+    roleIdList: userRole.value.map((item) => {
+      return item.id as number
+    }),
+  }
+  // 分配用户的职位
+  let result: any = await reqSetUserRole(data)
+  if (result.code == 200) {
+    // 提示信息
+    ElMessage({ type: 'success', message: '分配职务成功' })
+    // 关闭抽屉
+    drawer1.value = false
+    // 获取更新完毕用户的信息 更新完毕留在当前页
+    getHasUser(pageNo.value)
+  }
 }
 </script>
