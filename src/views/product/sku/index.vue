@@ -52,8 +52,17 @@
             icon="Edit"
             @click="updateSku"
           ></el-button>
-          <el-button type="info" size="small" @click="findSku(row)" icon="InfoFilled"></el-button>
-          <el-popconfirm :title="`确定删除${row.skuName}?`" width="200px">
+          <el-button
+            type="info"
+            size="small"
+            @click="findSku(row)"
+            icon="InfoFilled"
+          ></el-button>
+          <el-popconfirm
+            @confirm="removeSku(row.id)"
+            :title="`确定删除${row.skuName}?`"
+            width="200px"
+          >
             <template #reference>
               <el-button type="danger" size="small" icon="Delete"></el-button>
             </template>
@@ -127,10 +136,7 @@
                 v-for="item in skuInfo.skuImageList"
                 :key="item.id"
               >
-                <img
-                  :src="item.imgUrl"
-                  style="width: 100%; height: 100%"
-                />
+                <img :src="item.imgUrl" style="width: 100%; height: 100%" />
               </el-carousel-item>
             </el-carousel>
           </el-col>
@@ -141,7 +147,13 @@
 </template>
 
 <script setup lang="ts">
-import { reqCancelSale, reqSaleSku, reqSkuInfo, reqSkuList } from '@/api/product/sku'
+import {
+  reqCancelSale,
+  reqRemoveSku,
+  reqSaleSku,
+  reqSkuInfo,
+  reqSkuList,
+} from '@/api/product/sku'
 import { SkuData, SkuInfoData, SkuResponseData } from '@/api/product/sku/type'
 import { ElMessage } from 'element-plus'
 import { onMounted, ref } from 'vue'
@@ -208,6 +220,21 @@ const findSku = async (row: SkuData) => {
   let result: SkuInfoData = await reqSkuInfo(row.id as number)
   // 存储已有的SKU
   skuInfo.value = result.data
+}
+
+// 删除某一个已有的商品
+const removeSku = async (id: number) => {
+  // 删除某一个已有商品的情况
+  let result: any = await reqRemoveSku(id)
+  if (result.code == 200) {
+    // 提示信息
+    ElMessage({ type: 'success', message: '删除成功' })
+    // 获取已有全部商品
+    getHasSku(skuArr.value.length > 1 ? pageNo.value : pageNo.value - 1)
+  } else {
+    // 删除失败
+    ElMessage({ type: 'error', message: '系统数据不能删除' })
+  }
 }
 </script>
 
