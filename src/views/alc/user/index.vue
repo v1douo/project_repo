@@ -174,6 +174,8 @@ const addUser = () => {
   drawer.value = true
   // 清空数据
   Object.assign(userParams, {
+    // 如果点击更新用户是会存储 id 的，需要清除 id
+    id: 0,
     username: '',
     name: '',
     password: '',
@@ -189,7 +191,13 @@ const addUser = () => {
 const updateUser = (row: User) => {
   // 抽屉显示出来
   drawer.value = true
-  console.log(row)
+  // 显示当前点击的账号信息
+  Object.assign(userParams, row)
+  // 清除上一次的错误的提示信息
+  nextTick(() => {
+    formRef.value.clearValidate('username')
+    formRef.value.clearValidate('name')
+  })
 }
 // 添加 or 更新 保存按钮的回调
 async function save() {
@@ -207,7 +215,7 @@ async function save() {
     })
     // 获取最新的全部账号的信息
     // getHasUser(userParams.id ? pageNo.value : 1);
-    // 浏览器自动刷新一次
+    // 浏览器自动刷新一次，修改了用户名后，token 就失效了，所以直接刷新一下
     window.location.reload()
   } else {
     // 关闭抽屉
@@ -226,18 +234,18 @@ const cancel = () => {
 
 // 校验用户名字回调函数
 const validatorUsername = (_rule: any, value: any, callBack: any) => {
-  if (value.trim().length >= 5) {
+  if (value.trim().length >= 3) {
     callBack()
   } else {
-    callBack(new Error('用户名至少五位'))
+    callBack(new Error('用户名至少三位'))
   }
 }
 // 校验用户名字回调函数
 const validatorName = (_rule: any, value: any, callBack: any) => {
-  if (value.trim().length >= 5) {
+  if (value.trim().length >= 3) {
     callBack()
   } else {
-    callBack(new Error('用户昵称至少五位'))
+    callBack(new Error('用户昵称至少三位'))
   }
 }
 // 校验密码
