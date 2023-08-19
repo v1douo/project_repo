@@ -12,7 +12,9 @@
   </el-card>
 
   <el-card style="margin: 10px 0px">
-    <el-button type="primary" size="default">添加用户</el-button>
+    <el-button type="primary" size="default" @click="addUser">
+      添加用户
+    </el-button>
     <el-button type="danger" size="default">批量删除</el-button>
 
     <!-- table展示用户信息 -->
@@ -55,7 +57,14 @@
           <el-button type="success" size="small" icon="User">
             分配角色
           </el-button>
-          <el-button type="primary" size="small" icon="Edit">编辑</el-button>
+          <el-button
+            type="primary"
+            size="small"
+            icon="Edit"
+            @click="updateUser(row)"
+          >
+            编辑
+          </el-button>
           <el-popconfirm :title="`确定删除${row.username}?`" width="260px">
             <template #reference>
               <el-button type="danger" size="small" icon="Delete">
@@ -79,12 +88,49 @@
       @size-change="getHasUser"
     />
   </el-card>
+
+  <!-- 添加新的用户，修改用户信息 -->
+  <el-drawer v-model="drawer">
+    <template #header>
+      <h4>{{ userParams.id ? '更新用户' : '添加用户' }}</h4>
+    </template>
+    <!-- 身体部分 -->
+    <template #default>
+      <el-form :model="userParams" ref="formRef">
+        <el-form-item label="用户姓名" prop="username">
+          <el-input
+            placeholder="请您输入用户姓名"
+            v-model="userParams.username"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="用户昵称" prop="name">
+          <el-input
+            placeholder="请您输入用户昵称"
+            v-model="userParams.name"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="用户密码" prop="password" v-if="!userParams.id">
+          <el-input
+            placeholder="请您输入用户密码"
+            v-model="userParams.password"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template #footer>
+      <div style="flex: auto">
+        <el-button type="info" @click="cancel">取消</el-button>
+        <el-button type="primary" @click="save">确定</el-button>
+      </div>
+    </template>
+  </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { reqUserInfo } from '@/api/acl/user'
-import { Records, UserResponseData } from '@/api/acl/user/type'
-import { onMounted, ref } from 'vue'
+import { reqAddOrUpdateUser, reqUserInfo } from '@/api/acl/user'
+import { Records, User, UserResponseData } from '@/api/acl/user/type'
+import { ElMessage } from 'element-plus'
+import { onMounted, reactive, ref } from 'vue'
 
 // 默认页码
 let pageNo = ref<number>(1)
@@ -94,6 +140,15 @@ let pageSize = ref<number>(5)
 let total = ref<number>(0)
 // 存储全部用户的数组
 let userArr = ref<Records>([])
+
+// 定义响应式数据控制抽屉的显示与隐藏
+let drawer = ref<boolean>(false)
+// 收集用户信息的响应式数据（添加用户，修改用户）
+let userParams = reactive<User>({
+  username: '',
+  name: '',
+  password: '',
+})
 
 onMounted(() => {
   getHasUser()
@@ -108,5 +163,53 @@ const getHasUser = async (pager = 1) => {
     total.value = result.data.total
     userArr.value = result.data.records
   }
+}
+
+// 添加用户回调
+const addUser = () => {
+  // 抽屉显示出来
+  drawer.value = true
+  // 清空数据
+  Object.assign(userParams, {
+    username: '',
+    name: '',
+    password: '',
+  })
+}
+// 更新已有的用户按钮的回调
+const updateUser = (row: User) => {
+  // 抽屉显示出来
+  drawer.value = true
+  console.log(row)
+}
+// 添加 or 更新 保存按钮的回调
+async function save() {
+  let result: any = await reqAddOrUpdateUser(userParams)
+  // 添加或者更新成功
+  if (result.code == 200) {
+    // 关闭抽屉
+    drawer.value = false
+    // 提示消息
+    ElMessage({
+      type: 'success',
+      message: userParams.id ? '更新成功' : '添加成功',
+    })
+    // 获取最新的全部账号的信息
+    // getHasUser(userParams.id ? pageNo.value : 1);
+    // 浏览器自动刷新一次
+    window.location.reload()
+  } else {
+    // 关闭抽屉
+    drawer.value = false
+    // 提示消息
+    ElMessage({
+      type: 'error',
+      message: userParams.id ? '更新失败' : '添加失败',
+    })
+  }
+}
+// 取消按钮的回调
+const cancel = () => {
+  drawer.value = false
 }
 </script>
