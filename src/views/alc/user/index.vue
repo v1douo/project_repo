@@ -16,7 +16,7 @@
     <el-button type="danger" size="default">批量删除</el-button>
 
     <!-- table展示用户信息 -->
-    <el-table style="margin: 10px 0px" border>
+    <el-table style="margin: 10px 0px" border :data="userArr">
       <el-table-column type="selection" align="center"></el-table-column>
       <el-table-column label="#" align="center" type="index"></el-table-column>
       <el-table-column label="ID" align="center" prop="id"></el-table-column>
@@ -52,7 +52,7 @@
       ></el-table-column>
       <el-table-column label="操作" width="300px" align="center">
         <template #="{ row }">
-          <el-button type="primary" size="small" icon="User">
+          <el-button type="success" size="small" icon="User">
             分配角色
           </el-button>
           <el-button type="primary" size="small" icon="Edit">编辑</el-button>
@@ -75,12 +75,16 @@
       layout="prev, pager, next, jumper,->,sizes,total"
       :total="total"
       small="small"
+      @current-change="getHasUser"
+      @size-change="getHasUser"
     />
   </el-card>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { reqUserInfo } from '@/api/acl/user'
+import { Records, UserResponseData } from '@/api/acl/user/type'
+import { onMounted, ref } from 'vue'
 
 // 默认页码
 let pageNo = ref<number>(1)
@@ -88,4 +92,21 @@ let pageNo = ref<number>(1)
 let pageSize = ref<number>(5)
 // 用户总个数
 let total = ref<number>(0)
+// 存储全部用户的数组
+let userArr = ref<Records>([])
+
+onMounted(() => {
+  getHasUser()
+})
+
+// 获取全部已有的用户信息
+const getHasUser = async (pager = 1) => {
+  // 收集当前页码
+  pageNo.value = pager
+  let result: UserResponseData = await reqUserInfo(pageNo.value, pageSize.value)
+  if (result.code == 200) {
+    total.value = result.data.total
+    userArr.value = result.data.records
+  }
+}
 </script>
