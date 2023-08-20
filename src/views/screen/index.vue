@@ -80,7 +80,6 @@ window.onresize = () => {
     left: 50%;
     top: 50%;
     transform-origin: left top;
-    background-color: #fff;
 
     .top {
       width: 100%;
