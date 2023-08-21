@@ -44,7 +44,7 @@ import Line from './components/line/index.vue'
 //引入右侧三个子组件
 import Rank from './components/rank/index.vue'
 import Year from './components/year/index.vue'
-import Counter from './components/couter/index.vue'
+import Counter from './components/counter/index.vue'
 
 // 获取数据大屏 DOM 元素
 let screen = ref()
