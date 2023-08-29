@@ -10,9 +10,11 @@ const request = axios.create({
   timeout: 5000,
 })
 // 请求拦截器
+// config 是请求配置
 request.interceptors.request.use((config) => {
   // 获取用户仓库，目的是为了获取仓库中存储的登陆用户的 token
   // 用于携带给服务器（使用 headers）
+  // 服务器在检查 token 之后才会发送数据
   const userStore = useUserStore()
   if (userStore.token) {
     config.headers.token = userStore.token

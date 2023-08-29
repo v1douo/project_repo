@@ -14,7 +14,7 @@ import pinia from './store'
 const userStore = useUserStore(pinia)
 
 // 全局前置守卫
-router.beforeEach(async (to: any, from: any, next: any) => {
+router.beforeEach(async (to: any, _from: any, next: any) => {
   document.title = `${setting.title} - ${to.meta.title}`
   nprogress.start()
   // 获取 token 判断用户登录还是未登录
@@ -59,6 +59,6 @@ router.beforeEach(async (to: any, from: any, next: any) => {
 })
 
 // 全局后置守卫
-router.afterEach((to: any, from: any) => {
+router.afterEach((_to: any, _from: any) => {
   nprogress.done()
 })
